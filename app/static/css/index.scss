@@ -1,0 +1,144 @@
+$dark: #171717;
+$light: #ffffff;
+$font-stack: 'Fira Code', sans-serif;
+
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: $font-stack;
+  background-color: $dark;
+  color: $light;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 50px 0 0;
+}
+
+.info {
+  text-align: center;
+  max-width: 700px;
+  margin-bottom: 60px;
+  
+  &__title {
+    font-size: 45px;
+  }
+  
+  &__description {
+    font-size: 18px;
+  }
+}
+
+.container {
+  display: grid;
+  max-width: 1000px;
+  align-items: center;
+  
+  @media (min-width: 800px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.box {
+  min-height: 500px;
+  border: 5px solid $light;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 15%;
+  position: relative;
+  
+  &:first-of-type {
+    right: -5px;
+  }
+  
+  &:last-of-type {
+    left: -5px;
+  }
+  
+  &__title,
+  &__price {
+    font-size: 45px;
+    font-weight: bold;
+  }
+  
+  &__title {
+    margin: 0 0 20px;
+  }
+  
+  &__price {
+    margin: 30px 0;
+  }
+  
+  &__description {
+    font-size: 14px;
+  }
+  
+  &__button {
+    background-color: $light;
+    padding: 8px 25px;
+    font-family: $font-stack;
+    font-weight: bold;
+    border: none;
+  }
+  
+  &--featured {
+    background-color: $light;
+    color: $dark;
+    min-height: 550px;
+    box-shadow: 
+      -20px 0 25px -15px rgba(255,255,255, .3),
+      20px 0 25px -15px rgba(255,255,255, .3);
+    
+    &::before {
+      width: 95%;
+      height: 97%;
+      content: '';
+      position: absolute;
+      border: 5px solid $dark;
+    }
+    
+    &::after {
+      top: 1.5%;
+      width: 40%;
+      min-width: 45px;
+      height: 30px;
+      content: 'most popular';
+      font-size: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: $light;
+      background-color: $dark;
+      position: absolute;
+    }
+    
+    .box__title,
+    .box__price {
+      font-size: 60px;
+    }
+    
+    .box__description {
+      font-size: 16px;
+    }
+    
+    .box__button {
+      position: relative;
+      z-index: 10;
+      background-color: $dark;
+      color: $light;
+      font-size: 20px;
+      padding: 12px 28px;
+    }
+  }
+}
