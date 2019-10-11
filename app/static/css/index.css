@@ -16,7 +16,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding: 50px 0 0;
+  padding: 20px 0 0;
 }
 
 .info {
@@ -28,12 +28,12 @@ body {
   font-size: 45px;
 }
 .info__description {
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .container {
   display: grid;
-  max-width: 1100px;
+  max-width: 1000px;
   align-items: center;
 }
 @media (min-width: 800px) {
