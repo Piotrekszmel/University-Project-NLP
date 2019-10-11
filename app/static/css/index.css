@@ -33,7 +33,7 @@ body {
 
 .container {
   display: grid;
-  max-width: 1000px;
+  max-width: 1100px;
   align-items: center;
 }
 @media (min-width: 800px) {
@@ -80,7 +80,7 @@ body {
   border: none;
 }
 .box--featured {
-  background-color: #ffffff;
+  background-color: 	#D4AF37;
   color: #171717;
   min-height: 550px;
   box-shadow: -20px 0 25px -15px rgba(255, 255, 255, 0.3), 20px 0 25px -15px rgba(255, 255, 255, 0.3);
