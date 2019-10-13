@@ -78,7 +78,7 @@ p {
 	text-indent: 0;
 	text-shadow: none;
 	display: inline-block;
-	margin-top: 5%;
+	margin-top: 3%;
 	font: 200 7.5px Arial;
 	height: 35px;
 	width: 120px;
@@ -89,6 +89,6 @@ p {
 	color: #ffffff;
 	background-color: black;
 	font-size: 20px;
-	padding-top: 0.5%;
-	padding-bottom: 3%;
+	padding-top: 0.2em;
+	padding-bottom: 1em;
 }

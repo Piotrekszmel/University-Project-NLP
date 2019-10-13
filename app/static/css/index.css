@@ -52,8 +52,31 @@ body {
   text-align: center;
   padding: 0 0%;
   position: relative;
-  
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+
 }
+
+
+
+.box_1:hover {
+  color: gold;
+}
+
+.box_3:hover {
+  color: gold;
+}
+
+.box_1:hover > .button_1 {
+  background-color: black;
+  color: white;
+}
+
+.box_3:hover > .button_3{
+  background-color: black;
+  color: white
+}
+
 .box:first-of-type {
   right: -5px;
 }
