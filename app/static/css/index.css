@@ -50,7 +50,7 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 15%;
+  padding: 0 0%;
   position: relative;
   
 }
@@ -109,10 +109,14 @@ body {
 }
 .box--featured .box__title,
 .box--featured .box__price {
-  font-size: 60px;
+  font-size: 50px;
+  padding-right: 5%;
+  padding-left: 5%;
 }
 .box--featured .box__description {
   font-size: 16px;
+  padding-right: 5%;
+  padding-left: 5%;
 }
 .box--featured .box__button {
   position: relative;
