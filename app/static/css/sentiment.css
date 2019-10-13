@@ -69,3 +69,17 @@ p {
   color: black;
   text-align: center;
 }
+
+.button__back {
+	text-rendering: auto;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-transform: none;
+	text-indent: 0;
+	text-shadow: none;
+	display: inline-block;
+	margin-top: 5%;
+	font: 200 7.5px Arial;
+	height: 25px;
+	width: 120px;
+}
