@@ -22,10 +22,12 @@
 			<div class="button">
 				<input class="predict-button" type="submit" value="Predict">
 			</div>
-			<div>
-				<button class="button__back" onclick="window.location.href='/Sentiment'">choose</button>	
-			</div>
 		</form>
+		<div>
+				<form action="{{  url_for('index')}}" method='POST'>
+					<input class="predict-button" type="submit" value="Predict">
+				</form>
+		</div>
 	</div>
 </body>
 </html>

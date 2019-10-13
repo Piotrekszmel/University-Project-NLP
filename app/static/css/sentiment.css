@@ -43,7 +43,7 @@ p {
 .button .predict-button {
 	width: 120px;
 	height: 25px;
-	border-radius: 8px;
+	
 	background-color: #7052CB;
 	margin-top: 5px;
 	color: #ffffff;
@@ -80,6 +80,15 @@ p {
 	display: inline-block;
 	margin-top: 5%;
 	font: 200 7.5px Arial;
-	height: 25px;
+	height: 35px;
 	width: 120px;
+	border-radius: 8px;
+}
+
+.button__back {
+	color: #ffffff;
+	background-color: black;
+	font-size: 20px;
+	padding-top: 0.5%;
+	padding-bottom: 3%;
 }
