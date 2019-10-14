@@ -34,6 +34,23 @@ def get_labels_to_categories_map(y):
   """
   labels = get_class_labels(y)
   return {l: i for i, l in enumerate(labels)}
-  
+
+
+def categories_to_onehot(y):
+  """
+   Transform categorical labels to one-hot vectors
+   :param y: list of categories, ex. [0, 2, 1, 2, 0, ...]
+   :return: list of one-hot vectors, ex. [[0, 0, 1], [1, 0, 0], [0, 0, 1], [0, 1, 0], [0, 0, 1], ...]
+  """
+  return np_utils.to_categorical(y)
+
+
+def onehot_to_categories(y):
+  """
+   Transform categorical labels to one-hot vectors
+   :param y: list of one-hot vectors, ex. [[0, 0, 1], [1, 0, 0], [0, 0, 1], [0, 1, 0], [0, 0, 1], ...]
+   :return: list of categories, ex. [0, 2, 1, 2, 0, ...]
+  """
+  return np.asarray(y).argmax(axis=1)
 
 
