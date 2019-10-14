@@ -54,3 +54,16 @@ def onehot_to_categories(y):
   return np.asarray(y).argmax(axis=1)
 
 
+def get_class_weights(y):
+  """
+    Returns the normalized weights for each class based on the frequencies of the samples
+    :param y: list of true labels (the labels must be hashable)
+    :return: dictionary with the weight for each class
+  """
+  
+  weights = compute_class_weight("balanced", np.unique(y), y)
+
+  d = {c: w for c, w in zip(np.unique(y), weights)}
+
+  
+
