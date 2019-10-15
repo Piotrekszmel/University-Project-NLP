@@ -3,7 +3,7 @@ from keras.utils import np_utils
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import compute_class_weight
 import numpy as np
-
+import html
 
 def get_class_labels(y):
   """
@@ -103,3 +103,20 @@ def predic_classes(pred):
   else:
     return (pred > 0.5).astype("int32")
 
+
+def clean_text(text):
+  text = text.rstrip()
+
+  if '""' in text:
+    if text[0] == text[-1] == '"':
+      text = text[1:-1]
+    
+    text = text.replace('\\"', '"')
+    text = text.replace('""', '"')
+  
+  text = text.replace('\\""', '"')
+  
+  text = html.unescape(text)
+  text = ' '.join(text)
+
+  return text
