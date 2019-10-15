@@ -83,8 +83,23 @@ def class_weights2(y, smooth_factor=0):
       counter[k] += p
 
   majority = max(counter.values())
-  print("\n\n")
-  for cls, count in counter.items():
-    print(cls, " -> " , count)
+  
   return {cls: float(majority / count) for cls, count in counter.items()}
+
+
+def print_dataset_statistics(y):
+  """
+  Print frequencies statistics
+  """
+  counter = Counter(y)
+  print("Total: ", len(y))
+  statistics = {c: str(counter[c]) + "{:.2f}".format(counter[c] / float(len(y)) * 100.0) for c in sorted(counter.keys())}
+  print(statistics)
+
+
+def predic_classes(pred):
+  if pred.shape[-1] > 1:
+    return pred.argmax(axis=-1)
+  else:
+    return (pred > 0.5).astype("int32")
 
