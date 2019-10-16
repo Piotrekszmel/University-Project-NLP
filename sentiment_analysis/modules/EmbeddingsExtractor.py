@@ -77,7 +77,6 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         Xs = []
         for sent in X:
             Xs.append(np.asarray(self.index_text(sent, add_tokens=add_tokens)))
-        
         return np.asarray(Xs)
 
     def index_text_list(self, texts, length, add_tokens):
@@ -88,9 +87,54 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         :param add_tokens: whether to add special tokens in the beginning and at the end of each text
         :return: list of lists of integers (word ids)
         """
-
+        
         indexed = self.words_to_indices(texts, add_tokens=add_tokens)
+       
         if length > 0:
             indexed = self.sequences_to_fixed_length(indexed, length)
         
         return indexed
+        
+    def transform(self, X, y=None):
+        X = list(X)
+        
+        # if the input contains multiple texts eg. text and aspect
+        if isinstance(X[0][0], list):
+
+            if self.max_lengths is None:
+                max_lengths = [0] * len(X)
+            else:
+                max_lengths = self.max_lengths
+            if self.add_tokens is None:
+                add_tokens = [False] * len(X)
+            else:
+                add_tokens = self.add_tokens
+
+            if self.hierarchical:
+                assert self.max_lengths is not None
+                assert self.add_tokens is not None
+                max_lengths = [self.max_lengths] * len(X)
+                add_tokens = [self.add_tokens] * len(X)
+                return ([self.index_text_list(texts, length, add_tokens)
+                        for texts, length, add_tokens in zip(X, max_lengths, add_tokens)])
+            else:
+
+                return [self.index_text_list(texts, length, add_tokens)
+                        for texts, length, add_tokens in zip(zip(*X), max_lengths, add_tokens)]
+
+                
+        else:
+            if self.max_lengths is None:
+                max_lengths = 0
+            else:
+                max_lengths = self.max_lengths
+
+            if self.add_tokens is None:
+                add_tokens = False
+            else:
+                add_tokens = self.add_tokens
+
+            return self.index_text_list(X, max_lengths, add_tokens)
+
+    def fit(self, X, y=None):
+        return self 
