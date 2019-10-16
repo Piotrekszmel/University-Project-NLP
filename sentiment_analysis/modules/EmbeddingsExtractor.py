@@ -51,3 +51,46 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
     
     def index_text(self, sent, add_tokens=False):
         sent_words = []
+        
+        if add_tokens:
+            sent_words.append(self.word_indices.get("<s>", 0))
+        
+        for token in sent:
+            if token in self.word_indices:
+                sent_words.append(self.word_indices[token])
+            else:
+                if self.unk_policy == "random":
+                    sent_words.append(self.word_indices.get("<unk>", 0))
+                elif self.unk_policy == "zero":
+                    sent_words.append(0)
+        
+        if add_tokens:
+            sent_words.append(self.word_indices.get("</s>", 0))
+        
+        return sent_words
+
+    def words_to_indices(self, X, add_tokens=False):
+        """
+        :param X: list of texts
+        :param add_tokens:
+        """
+        Xs = []
+        for sent in X:
+            Xs.append(np.asarray(self.index_text(sent, add_tokens=add_tokens)))
+        
+        return np.asarray(Xs)
+
+    def index_text_list(self, texts, length, add_tokens):
+        """
+        Converts a list of texts (strings) to a list of lists of integers (word ids)
+        :param texts: the list of texts
+        :param length: the maximum length that a text can have. 0 means no limit
+        :param add_tokens: whether to add special tokens in the beginning and at the end of each text
+        :return: list of lists of integers (word ids)
+        """
+
+        indexed = self.words_to_indices(texts, add_tokens=add_tokens)
+        if length > 0:
+            indexed = self.sequences_to_fixed_length(indexed, length)
+        
+        return indexed
