@@ -31,6 +31,11 @@ def prepare_dataset(X, y, pipeline, y_one_hot=True, y_as_is=False):
 
 
 def get_embeddings(corpus, dim):
+    
+    """
+    return return embeddings matrix with shape (vocab_size + 2, dim) and word vectors map for that matrix
+    """
+    
     vectors = WordVectorsManager(corpus, dim).read()
     vocab_size = len(vectors)
     
@@ -51,3 +56,40 @@ def get_embeddings(corpus, dim):
     emb_matrix[pos] = np.random.uniform(low=-0.05, high=0.05, size=dim)
 
     return emb_matrix, wv_map
+
+
+def prepare_text_only_dataset(X, pipeline):
+    X = pipeline.fit_transform(X)
+    return X
+
+
+def data_splits(dataset, final=False):
+    '''
+    Splits a dataset in parts
+    :param dataset:
+    :param final: Flag that indicates if we want a split for tha final submission or for normal training
+    :return:
+    '''
+    if final:
+        # 95% training and 5% validation
+        train_ratio = 0.95
+        train_split_index = int(len(dataset) * train_ratio)
+
+        training = dataset[:train_split_index]
+        test = dataset[train_split_index:]
+
+        return training, test
+    else:
+        # 80% training, 10% validation and 10% testing
+        train_ratio = 0.8
+        val_test_ratio = 0.5
+        train_split_index = int(len(dataset) * train_ratio)
+        val_test_split_index = int(
+            (len(dataset) - train_split_index) * val_test_ratio)
+
+        training = dataset[:train_split_index]
+        rest = dataset[train_split_index:]
+        validation = rest[:val_test_split_index]
+        test = rest[val_test_split_index:]
+
+        return training, validation, test
