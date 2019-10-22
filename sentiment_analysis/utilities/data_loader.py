@@ -30,3 +30,24 @@ def prepare_dataset(X, y, pipeline, y_one_hot=True, y_as_is=False):
         return X, categories_to_onehot(y_cat)
 
 
+def get_embeddings(corpus, dim):
+    vectors = WordVectorsManager(corpus, dim).read()
+    vocab_size = len(vectors)
+    
+    print("Loaded {} word vectors.".format(vocab_size))
+
+    wv_map = {}
+    pos = 0
+    emb_matrix = np.ndarray((vocab_size + 2, dim), dtype="float32")
+
+    for i, (word, vector) in enumerate(vectors.items()):
+        if len(vector) > 199:
+            pos = i + 1
+            wv_map[word] = pos
+            emb_matrix[pos] = vector
+
+    pos += 1
+    wv_map["<unk>"] = pos
+    emb_matrix[pos] = np.random.uniform(low=-0.05, high=0.05, size=dim)
+
+    return emb_matrix, wv_map
