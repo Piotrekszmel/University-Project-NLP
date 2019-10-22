@@ -28,6 +28,7 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         
         return Xs
 
+    
     def get_fixed_size_topic(self, X, max_lengths):
         X = list(X)
         Xs = np.zeros((len(X), max_lengths), dtype="int32")
@@ -49,6 +50,7 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         
         return Xs
     
+    
     def index_text(self, sent, add_tokens=False):
         sent_words = []
         
@@ -69,6 +71,7 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         
         return sent_words
 
+    
     def words_to_indices(self, X, add_tokens=False):
         """
         :param X: list of texts
@@ -79,6 +82,7 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
             Xs.append(np.asarray(self.index_text(sent, add_tokens=add_tokens)))
         return np.asarray(Xs)
 
+   
     def index_text_list(self, texts, length, add_tokens):
         """
         Converts a list of texts (strings) to a list of lists of integers (word ids)
@@ -95,6 +99,7 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         
         return indexed
         
+    
     def transform(self, X, y=None):
         X = list(X)
         
@@ -136,5 +141,6 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
 
             return self.index_text_list(X, max_lengths, add_tokens)
 
+    
     def fit(self, X, y=None):
         return self 

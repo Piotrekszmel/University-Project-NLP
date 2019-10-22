@@ -3,9 +3,11 @@ from ekphrasis.classes.tokenizer import SocialTokenizer
 from ekphrasis.dicts.emoticons import emoticons
 from utilities.data_preparation import print_dataset_statistics, labels_to_categories, categories_to_onehot
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
 from embeddings.WordVectorsManager import WordVectorsManager
 from modules.CustomPreProcessor import CustomPreProcessor
 from modules.EmbeddingsExtractor import EmbeddingsExtractor
+from data.data_loader import DataLoader
 import numpy as np
 import random
 
@@ -93,3 +95,57 @@ def data_splits(dataset, final=False):
         test = rest[val_test_split_index:]
 
         return training, validation, test
+
+
+class Loader:
+    def __init__(self, word_indices, text_lengths, **kwargs):
+        
+        self.word_indices = word_indices
+        self.y_one_hot = kwargs.get("y_one_hot", True)
+        filter_classes = kwargs.get("filter_classes", None)
+
+        self.pipeline = Pipeline([
+            ('preprocess', CustomPreProcessor(TextPreProcessor(
+                backoff=['url', 'email', 'percent', 'money', 'phone', 'user',
+                         'time', 'url', 'date', 'number'],
+                include_tags={"hashtag", "allcaps", "elongated", "repeated",
+                              'emphasis', 'censored'},
+                fix_html=True,
+                segmenter="twitter",
+                corrector="twitter",
+                unpack_hashtags=True,
+                unpack_contractions=True,
+                spell_correct_elong=False,
+                tokenizer=SocialTokenizer(lowercase=True).tokenize,
+                dicts=[emoticons]))),
+            ('ext', EmbeddingsExtractor(word_indices=word_indices,
+                                        max_lengths=text_lengths,
+                                        add_tokens=True,
+                                        unk_policy="random"))])
+
+        print("Loading data...")
+
+        dataset = DataLoader(verbose=False).get_data(years=None, datasets=None)
+        random.Random(42).shuffle(dataset)
+
+        if filter_classes:
+            dataset = [d for d in dataset if d[0] in filter_classes]
+
+        self.X = [obs[1] for obs in dataset]
+        self.y = [obs[0] for obs in dataset]
+        print("total observations:", len(self.y))
+
+        print("-------------------\ntraining set stats\n-------------------")
+        print_dataset_statistics(self.y)
+        print("-------------------")
+    
+
+    def load_train_val_test(self, only_test=False):
+        X_train, X_rest, y_train, y_rest = train_test_split(self.X, self.y,
+                                                            test_size=0.3,
+                                                            stratify=self.y,
+                                                            random_state=42)
+        X_val, X_test, y_val, y_test = train_test_split(X_rest, y_rest,
+                                                        test_size=0.5,
+                                                        stratify=y_rest,
+                                                        random_state=42)
