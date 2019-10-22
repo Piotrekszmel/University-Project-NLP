@@ -149,3 +149,33 @@ class Loader:
                                                         test_size=0.5,
                                                         stratify=y_rest,
                                                         random_state=42)
+
+        if not only_test:
+            print("\nPreparing training set...")
+            training = prepare_dataset(X_train, y_train, self.pipeline,
+                                       self.y_one_hot)
+            print("\nPreparing validation set...")
+            validation = prepare_dataset(X_val, y_val, self.pipeline,
+                                         self.y_one_hot)
+        print("\nPreparing test set...")
+        testing = prepare_dataset(X_test, y_test, self.pipeline,
+                                  self.y_one_hot)
+
+        if only_test:
+            return testing
+        else:
+            return training, validation, testing
+
+    
+    def load_final(self):
+        X_train, X_test, y_train, y_test = train_test_split(self.X, self.y,
+                                                            test_size=0.1,
+                                                            stratify=self.y,
+                                                            random_state=27)
+        print("\nPreparing training set...")
+        training = prepare_dataset(X_train, y_train, self.pipeline,
+                                   self.y_one_hot)
+        print("\nPreparing test set...")
+        testing = prepare_dataset(X_test, y_test, self.pipeline,
+                                  self.y_one_hot)
+        return training, testing
