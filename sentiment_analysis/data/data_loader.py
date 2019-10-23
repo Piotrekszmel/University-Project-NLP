@@ -25,7 +25,6 @@ class DataLoader:
 
     data ={}
     
-
     if self.verbose:
       print("Parsing file: ", filename, end=" ")
 

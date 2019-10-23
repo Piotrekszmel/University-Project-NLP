@@ -19,4 +19,27 @@ class MeanOverTime(Layer):
     self.supports_masking = True
     super().__init__(**kwargs)
 
+  def call(self, x, mask=None):
+        if mask is not None:
+            mask = K.cast(mask, 'float32')
+            return K.cast(K.sum(x, axis=1) / K.sum(mask, axis=1, keepdims=True),
+                          K.floatx())
+        else:
+            return K.mean(x, axis=1)
+  
+  def compute_output_shape(self, input_shape):
+    return input_shape[0], input_shape[-1]
+  
+  def compute_mask(self, input, input_mask=None):
+    return None
 
+
+class Attention(Layer):
+  def __init__(self,
+                 W_regularizer=None, b_regularizer=None,
+                 W_constraint=None, b_constraint=None,
+                 bias=True,
+                 return_attention=False,
+                 **kwargs):
+
+  pass
