@@ -64,18 +64,18 @@ class Attention(Layer):
             sentence, word_scores = Attention(return_attention=True)(hidden)
         """
     
-    self.supports_masking = True
-    self.return_attention = return_attention
-    self.init = initializers.get('glorot_uniform')
+        self.supports_masking = True
+        self.return_attention = return_attention
+        self.init = initializers.get('glorot_uniform')
 
-    self.W_regularizer = regularizers.get(W_regularizer)
-    self.b_regularizer = regularizers.get(b_regularizer)
+        self.W_regularizer = regularizers.get(W_regularizer)
+        self.b_regularizer = regularizers.get(b_regularizer)
 
-    self.W_constraint = constraints.get(W_constraint)
-    self.b_constraint = constraints.get(b_constraint)
+        self.W_constraint = constraints.get(W_constraint)
+        self.b_constraint = constraints.get(b_constraint)
 
-    self.bias = bias
-    super().__init__(**kwargs)
+        self.bias = bias
+        super().__init__(**kwargs)
 
     def build(self, input_shape):
         assert len(input_shape) == 3
@@ -123,5 +123,12 @@ class Attention(Layer):
             return [result, a]
         
         return result
+    
+    def compute_output_shape(self, input_shape):
+        if self.return_attention:
+            return [(input_shape[0], input_shape[-1]),
+                    (input_shape[0], input_shape[1])]
+        else:
+            return input_shape[0], input_shape[-1]
 
 
