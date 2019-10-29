@@ -132,3 +132,23 @@ class Attention(Layer):
             return input_shape[0], input_shape[-1]
 
 
+class AttentionWithContext(Layer):
+    """
+        Attention operation, with a context/query vector, for temporal data.
+        Supports Masking.
+        Follows the work of Yang et al. [https://www.cs.cmu.edu/~diyiy/docs/naacl16.pdf]
+        "Hierarchical Attention Networks for Document Classification"
+        by using a context vector to assist the attention
+        # Input shape
+            3D tensor with shape: `(samples, steps, features)`.
+        # Output shape
+            2D tensor with shape: `(samples, features)`.
+        :param kwargs:
+        Just put it on top of an RNN Layer (GRU/LSTM/SimpleRNN) with return_sequences=True.
+        The dimensions are inferred based on the output shape of the RNN.
+        Example:
+            model.add(LSTM(64, return_sequences=True))
+            model.add(AttentionWithContext())
+        """
+
+
