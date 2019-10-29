@@ -198,5 +198,31 @@ class AttentionWithContext(Layer):
     def compute_mask(self, input, mask=None):
         return None
     
-    
-    
+    def call(self, x, mask=None):
+        uit = dot_product(x, self.W)
+
+        if self.bias:
+            uit += self.b
+
+        uit = K.tanh(uit)
+
+        ait = dot_product(uit, self.u)
+
+        a = K.exp(ait)
+
+        if mask is not None:
+            a *= K.cast(mask, K.floatx())
+        
+        a /= K.cast(K.sum(a, axis=1, keepdims=True) + K.epsilon(), K.floatx())
+
+        a = K.expand_dims(a)
+        weighted_input = x * a
+
+        result = K.sum(weighted_input, axis=1)
+
+        if self.return_attention:
+            return [result, a]
+        return result
+
+    def compute_output_shape(self, input_shape):
+        if self.return_attention:
