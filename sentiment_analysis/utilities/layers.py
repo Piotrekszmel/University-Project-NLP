@@ -151,4 +151,25 @@ class AttentionWithContext(Layer):
             model.add(AttentionWithContext())
         """
 
+    def __init__(self,
+                 W_regularizer=None, u_regularizer=None, b_regularizer=None,
+                 W_constraint=None, u_constraint=None, b_constraint=None,
+                 bias=True,
+                 return_attention=False, **kwargs):
+        
+        self.supports_masking = True
+        self.return_attention = return_attention
+        self.init = initializers.get('glorot_uniform')
 
+        self.W_regularizer = regularizers.get(W_regularizer)
+        self.u_regularizer = regularizers.get(u_regularizer)
+        self.b_regularizer = regularizers.get(b_regularizer)
+
+        self.W_constraint = constraints.get(W_constraint)
+        self.u_constraint = constraints.get(u_constraint)
+        self.b_constraint = constraints.get(b_constraint)
+
+        self.bias = bias
+        super().__init__(**kwargs)
+    
+    
