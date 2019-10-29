@@ -194,3 +194,9 @@ class AttentionWithContext(Layer):
                                  constraint=self.u_constraint)
 
         super.build(input_shape)
+    
+    def compute_mask(self, input, mask=None):
+        return None
+    
+    
+    
