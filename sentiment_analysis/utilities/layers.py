@@ -226,3 +226,7 @@ class AttentionWithContext(Layer):
 
     def compute_output_shape(self, input_shape):
         if self.return_attention:
+            return [(input_shape[0], input_shape[-1]),
+                    (input_shape[0], input_shape[1])]
+        else:
+            return input_shape[0], input_shape[-1]
