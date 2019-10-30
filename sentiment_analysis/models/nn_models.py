@@ -34,3 +34,13 @@ def embeddings_layer(max_length, embeddings, trainable=False, masking=False,
     )
 
     return _embedding
+
+
+def get_RNN(unit=LSTM, cells=64, bi=False, return_sequences=True, dropout_U=0.,
+            consume_less='cpu', l2_reg=0):
+    rnn = unit(cells, return_sequences=return_sequences, consume_less=consume_less,
+               dropout_U=dropout_U, W_regularizer=l2(l2_reg))
+    if bi:
+        return Bidirectional(rnn)
+    else:
+        return rnn
