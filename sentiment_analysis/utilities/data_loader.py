@@ -1,15 +1,17 @@
 from ekphrasis.classes.preprocessor import TextPreProcessor
 from ekphrasis.classes.tokenizer import SocialTokenizer
 from ekphrasis.dicts.emoticons import emoticons
-from utilities.data_preparation import print_dataset_statistics, labels_to_categories, categories_to_onehot
+from ..utilities.data_preparation import print_dataset_statistics, labels_to_categories, categories_to_onehot
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from embeddings.WordVectorsManager import WordVectorsManager
-from modules.CustomPreProcessor import CustomPreProcessor
-from modules.EmbeddingsExtractor import EmbeddingsExtractor
-from data.data_loader import DataLoader
+from ..embeddings.WordVectorsManager import WordVectorsManager
+from ..modules.CustomPreProcessor import CustomPreProcessor
+from ..modules.EmbeddingsExtractor import EmbeddingsExtractor
+from ..data.data_loader import DataLoader
 import numpy as np
 import random
+import sys
+sys.path.append('..')
 
 
 def prepare_dataset(X, y, pipeline, y_one_hot=True, y_as_is=False):
@@ -99,7 +101,6 @@ def data_splits(dataset, final=False):
 
 class Loader:
     def __init__(self, word_indices, text_lengths, **kwargs):
-        
         self.word_indices = word_indices
         self.y_one_hot = kwargs.get("y_one_hot", True)
         filter_classes = kwargs.get("filter_classes", None)
@@ -127,7 +128,7 @@ class Loader:
 
         dataset = DataLoader(verbose=False).get_data(years=None, datasets=None)
         random.Random(42).shuffle(dataset)
-
+        
         if filter_classes:
             dataset = [d for d in dataset if d[0] in filter_classes]
 

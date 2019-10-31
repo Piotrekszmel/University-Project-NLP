@@ -1,14 +1,17 @@
+import sys
+sys.path.append('..')
+sys.path.append('.')
 import re
 import os
 import glob
-from utilities.data_preparation import clean_text
+from ..utilities.data_preparation import clean_text
 
 
 class DataLoader:
   def __init__(self, verbose=True):
     self.verbose = verbose
     self.separator = "\t"
-    self.datasets_path = os.path.join(os.getcwd(), 'data/datasets')
+    self.datasets_path = os.path.join(os.getcwd(), 'sentiment_analysis/data/datasets')
 
     print()
 
@@ -29,7 +32,7 @@ class DataLoader:
       print("Parsing file: ", filename, end=" ")
 
     for line_id, line in enumerate(
-        open(os.path.join(os.getcwd(), "data/datasets", filename), "r", encoding="utf-8").readlines()):
+        open(os.path.join(os.getcwd(), "sentiment/analysis/data/datasets", filename), "r", encoding="utf-8").readlines()):
 
       try:
         columns = line.strip().split(self.separator)
@@ -71,8 +74,9 @@ class DataLoader:
     :param dataset: set with possible values {"train", "dev", "devtest", "test"}
     :return: a list of tuples(sentiment, text)
     """
-
+    
     files = glob.glob(self.datasets_path + "/*.tsv")
+    
     data = {}
 
     if years is not None and not isinstance(years, tuple):

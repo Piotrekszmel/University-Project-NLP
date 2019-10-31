@@ -1,9 +1,15 @@
 from keras import backend as K, regularizers, constraints, initializers
 from keras.engine.topology import Layer
+import sys
+sys.path.append('..')
 
 
 def dot_product(x, kernel):
-  return K.dot(x, kernel)
+    if K.backend() == 'tensorflow':
+        # todo: check that this is correct
+        return K.squeeze(K.dot(x, K.expand_dims(kernel)), axis=-1)
+    else:
+        return K.dot(x, kernel)
 
 
 class MeanOverTime(Layer):

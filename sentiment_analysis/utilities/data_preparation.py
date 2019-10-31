@@ -4,6 +4,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import compute_class_weight
 import numpy as np
 import html
+import sys
+sys.path.append('..')
 
 def get_class_labels(y):
   """
@@ -68,7 +70,7 @@ def get_class_weights(y):
   return d
 
 
-def class_weights2(y, smooth_factor=0):
+def get_class_weights2(y, smooth_factor=0):
   """
     Returns the normalized weights for each class based on the frequencies of the samples
     :param smooth_factor: factor that smooths extremely uneven weights

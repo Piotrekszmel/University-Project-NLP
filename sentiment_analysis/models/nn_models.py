@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 from keras.constraints import maxnorm
 from keras.engine import Input
 from keras.engine import Model
@@ -8,9 +10,8 @@ from keras.layers import Dropout, Dense, Bidirectional, LSTM, \
 from keras.models import Sequential
 from keras.optimizers import Adam
 from keras.regularizers import l2
-from utilities.layers import AttentionWithContext, Attention, MeanOverTime
+from ..utilities.layers import AttentionWithContext, Attention, MeanOverTime
 from sklearn import preprocessing
-
 
 def embeddings_layer(max_length, embeddings, trainable=False, masking=False,
                      scale=False, normalize=False):

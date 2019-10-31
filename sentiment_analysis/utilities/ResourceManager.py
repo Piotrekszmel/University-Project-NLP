@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod, ABC
 from frozendict import frozendict
+import sys
+sys.path.append('..')
 
 
 class ResourceManager(metaclass=ABCMeta):
