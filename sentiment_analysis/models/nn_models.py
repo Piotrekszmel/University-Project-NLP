@@ -99,3 +99,30 @@ def build_attention_RNN(embeddings, classes, max_length, unit=LSTM, cells=64,
                  loss="categorical_crossentropy")
 
     return model
+
+
+def target_RNN(wv, tweet_max_length, aspect_max_length, classes=2, **kwargs):
+    noise = kwargs.get("noise", 0)
+    trainable = kwargs.get("trainable", False)
+    rnn_size = kwargs.get("rnn_size", 75)
+    rnn_type = kwargs.get("rnn_type", LSTM)
+    final_size = kwargs.get("final_size", 100)
+    final_type = kwargs.get("final_type", "linear")
+    use_final = kwargs.get("use_final", False)
+    drop_text_input = kwargs.get("drop_text_input", 0.)
+    drop_text_rnn = kwargs.get("drop_text_rnn", 0.)
+    drop_text_rnn_U = kwargs.get("drop_text_rnn_U", 0.)
+    drop_target_rnn = kwargs.get("drop_target_rnn", 0.)
+    drop_rep = kwargs.get("drop_rep", 0.)
+    drop_final = kwargs.get("drop_final", 0.)
+    activity_l2 = kwargs.get("activity_l2", 0.)
+    clipnorm = kwargs.get("clipnorm", 5)
+    bi = kwargs.get("bi", False)
+    lr = kwargs.get("lr", 0.001)
+
+    attention = kwargs.get("attention", "simple")
+
+    shared_RNN = get_RNN(rnn_type, rnn_size, bi=bi, return_sequences=True, dropout_U=drop_text_rnn_U)
+
+    input_tweet = Input(shape=[tweet_max_length], dtype="int32")
+    input_aspect = Input(shape[aspect_max_length], dtype="int32")
