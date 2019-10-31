@@ -65,5 +65,5 @@ def Sentiment_Analysis(WV_CORPUS, WV_DIM, max_length, PERSIST,  FINAL=True):
                                 dropout_rnn_U=0.3,
                                 clipnorm=1, lr=0.001, loss_l2=0.0001,)
 
-  print(model.summary())
+  print(nn_model.summary())
 
