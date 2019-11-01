@@ -20,3 +20,25 @@ class Attention(Layer):
         self.trainable_weights = [self.W]
         super().build(input_shape)
     
+    def call(self, x, mask=None):
+        x_shape = K.shape(x)
+        
+        eij = K.dot(x, self.W)
+        eij = K.reshape(eij, (x_shape[0], x_shape[1]))
+        eij = K.tanh(eij)
+        
+        a = K.exp(eij)
+
+        if mask is not None:
+            a *= K.cast(mask, K.floatx())
+        
+        a /= K.cast(K.sum(a, axis=1, keepdims=True) + K.epsilon(), K.floatx())
+
+        weighted_input = x * K.expand_dims(a)
+
+        result = K.sum(weighted_input, axis=1)
+
+        if self.return_attention:
+            [result, a]
+        
+        return result
