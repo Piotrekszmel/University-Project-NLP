@@ -42,3 +42,16 @@ class Attention(Layer):
             [result, a]
         
         return result
+
+    def compute_output_shape(self, input_shape):
+        if self.return_attention:
+            [input_shape[0], input_shape[-1],
+            input_shape[0], input_shape[1]]
+        else:
+            return [input_shape[0], input_shape[-1]]
+    
+    def compute_mask(self, inputs, input_mask=None):
+        if isinstance(input_mask, list):
+            return [None] * len(input_mask)
+        else:
+            return None
