@@ -17,14 +17,14 @@
 		</header>
 	</div>
 	<div class="ml-container" style="background-color: #1e1e1e	">
-		<form action="{{  url_for('sentiment')}}" method='POST'>
+		<form action="{{  url_for('sentiment') }}" method='POST'>
 			<p class='topic' style="color: #FFFFFF">Enter Sentence:</p><input class="text" name="text" placeholder="  Enter sentence.."><br>
 			<div class="button">
 				<input class="predict-button" type="submit" value="Predict">
 			</div>
 		</form>
 		<div>
-				<form action="{{  url_for('index')}}" method='POST'>
+				<form action="{{ url_for('index') }}" method='POST'>
 					<input class="button__back" type="submit" value="back">
 				</form>
 		</div>
