@@ -30,3 +30,31 @@ def text_generate_sample(preds, temperature, top_n=3):
         index = np.argsort(preds)[-2]
     
     return index
+
+
+def textgenrnn_generate(model, vocab,
+                        indices_char, temperature=0.5,
+                        maxlen=40, meta_token='<s>',
+                        single_text=False,
+                        max_gen_length=300,
+                        top_n=3,
+                        prefix=None,
+                        synthesize=False,
+                        stop_tokens=[' ', '\n']):
+    '''
+    Generates and returns a single text.
+    '''
+
+    collapse_char = " " 
+    end = False
+
+    if prefix:
+        punct = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~\\n\\t\'‘’“”’–—'
+        prefix = re.sub("([{}])".format(punct), r' \1', prefix)
+        prefix_t = [w.lower() for w in prefix.split()]
+    
+    if single_text: 
+        text = prefix_t if prefix else [""]
+        max_gen_length += maxlen
+    else:
+        text = [meta_token] + prefix_t if prefix else [meta_token]
