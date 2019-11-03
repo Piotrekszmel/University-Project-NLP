@@ -35,6 +35,7 @@ def text_generate_sample(preds, temperature, top_n=3):
 def textgenrnn_generate(model, vocab,
                         indices_char, temperature=0.5,
                         maxlen=40, meta_token='<s>',
+                        word_level=False,
                         single_text=False,
                         max_gen_length=300,
                         top_n=3,
@@ -45,16 +46,56 @@ def textgenrnn_generate(model, vocab,
     Generates and returns a single text.
     '''
 
-    collapse_char = " " 
+    collapse_char = ' ' if word_level else ''
     end = False
 
-    if prefix:
+    # If generating word level, must add spaces around each punctuation.
+    # https://stackoverflow.com/a/3645946/9314418
+    if word_level and prefix:
         punct = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~\\n\\t\'‘’“”’–—'
-        prefix = re.sub("([{}])".format(punct), r' \1', prefix)
-        prefix_t = [w.lower() for w in prefix.split()]
-    
-    if single_text: 
-        text = prefix_t if prefix else [""]
+        prefix = re.sub('([{}])'.format(punct), r' \1 ', prefix)
+        prefix_t = [x.lower() for x in prefix.split()]
+
+    if not word_level and prefix:
+        prefix_t = list(prefix)
+
+    if single_text:
+        text = prefix_t if prefix else ['']
         max_gen_length += maxlen
     else:
         text = [meta_token] + prefix_t if prefix else [meta_token]
+
+    next_char = ''
+
+    if not isinstance(temperature, list):
+        temperature = [temperature]
+
+    if len(model.inputs) > 1:
+        model = Model(inputs=model.inputs[0], outputs=model.outputs[1])
+
+    while not end and len(text) < max_gen_length:
+        encoded_text = text_generation_encode_sequence(text[-maxlen:],
+                                                  vocab, maxlen)
+        next_temperature = temperature[(len(text) - 1) % len(temperature)]
+
+        next_index = text_generate_sample(model.predict(encoded_text, batch_size=1)[0], next_temperature)
+        next_char = indices_char[next_index]
+        text += [next_char]
+        if next_char == meta_token or len(text) >= max_gen_length:
+            end = True
+        generation_break = (next_char in stop_tokens or word_level or len(stop_tokens) == 0)
+        if synthesize and generation_break:
+            break
+            
+    if single_text:
+        text = text[:maxlen]
+    else:
+        text = text[1:]
+        if meta_token in text:
+            text.remove(meta_token)
+
+
+def text_generation_encode_sequence(text, vocab, maxlen):
+    encoded = np.array([vocab.get(val, 0) for val in text])
+    
+    return sequence.pad_sequences([encoded], maxlen=maxlen) 
