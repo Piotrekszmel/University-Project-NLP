@@ -190,9 +190,40 @@ def synthesize(textgens, n=1, return_as_list=False, prefix='',
         return gen_texts
 
 
-
 def synthesize_to_file(textgens, destination_path, **kwargs):
     texts = synthesize(textgens, return_as_list=True, **kwargs)
     with open(destination_path, 'w') as f:
         for text in texts:
             f.write("{}\n".format(text))
+
+
+class generate_after_epoch(Callback):
+    def __init__(self, textgen, gen_epochs, max_gen_length):
+        self.textgen = textgen
+        self.gen_epochs = gen_epochs
+        self.max_gen_length = max_gen_length
+
+    def on_epoch_end(self, epoch, logs={}):
+        if self.gen_epochs > 0 and (epoch + 1) % self.gen_epochs == 0:
+            self.textgen.generate_samples(max_gen_length=self.max_gen_length)
+
+
+class save_model_weights(Callback):
+    def __init__(self, textgenrnn, num_epochs, save_epochs):
+        self.textgenrnn = textgenrnn
+        self.weights_name = textgenrnn.config['name']
+        self.num_epochs = num_epochs
+        self.save_epochs = save_epochs
+
+    def on_epoch_end(self, epoch, logs={}):
+        if len(self.textgenrnn.model.inputs) > 1:
+            self.textgenrnn.model = Model(inputs=self.model.input[0],
+                                          outputs=self.model.output[1])
+        if self.save_epochs > 0 and (epoch+1) % self.save_epochs == 0 and self.num_epochs != (epoch+1):
+            print("Saving Model Weights — Epoch #{}".format(epoch+1))
+            self.textgenrnn.model.save_weights(
+                "{}_weights_epoch_{}.hdf5".format(self.weights_name, epoch+1))
+        else:
+            self.textgenrnn.model.save_weights(
+                "{}_weights.hdf5".format(self.weights_name))
+    
