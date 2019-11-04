@@ -32,7 +32,7 @@ def text_generate_sample(preds, temperature, top_n=3):
     return index
 
 
-def textgenrnn_generate(model, vocab,
+def text_generation_generate(model, vocab,
                         indices_char, temperature=0.5,
                         maxlen=40, meta_token='<s>',
                         word_level=False,
@@ -150,3 +150,49 @@ def text_generation_encode_cat(chars, vocab):
                        for i, char in enumerate(chars)])
     a[rows, cols] = 1
     return a
+
+
+
+def synthesize(textgens, n=1, return_as_list=False, prefix='',
+               temperature=[0.5, 0.2, 0.2], max_gen_length=300,
+               progress=True, stop_tokens=[' ', '\n']):
+    """
+    Synthesizes texts using an ensemble of input models.
+    """
+
+    gen_texts = []
+    iterable = trange(n) if progress and n > 1 else range(n)
+    for _ in iterable:
+        shuffle(textgens)
+        gen_text = prefix
+        end = False
+        textgen_i = 0
+        while not end:
+            textgen = textgens[textgen_i % len(textgens)]
+            gen_text, end = text_generation_generate(textgen.model,
+                                                textgen.vocab,
+                                                textgen.indices_char,
+                                                temperature,
+                                                textgen.config['max_length'],
+                                                textgen.META_TOKEN,
+                                                textgen.config['word_level'],
+                                                textgen.config.get(
+                                                    'single_text', False),
+                                                max_gen_length,
+                                                prefix=gen_text,
+                                                synthesize=True,
+                                                stop_tokens=stop_tokens)
+            textgen_i += 1
+        if not return_as_list:
+            print("{}\n".format(gen_text))
+        gen_texts.append(gen_text)
+    if return_as_list:
+        return gen_texts
+
+
+
+def synthesize_to_file(textgens, destination_path, **kwargs):
+    texts = synthesize(textgens, return_as_list=True, **kwargs)
+    with open(destination_path, 'w') as f:
+        for text in texts:
+            f.write("{}\n".format(text))
