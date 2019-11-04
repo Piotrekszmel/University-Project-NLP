@@ -49,8 +49,6 @@ def textgenrnn_generate(model, vocab,
     collapse_char = ' ' if word_level else ''
     end = False
 
-    # If generating word level, must add spaces around each punctuation.
-    # https://stackoverflow.com/a/3645946/9314418
     if word_level and prefix:
         punct = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~\\n\\t\'‘’“”’–—'
         prefix = re.sub('([{}])'.format(punct), r' \1 ', prefix)
@@ -93,6 +91,14 @@ def textgenrnn_generate(model, vocab,
         text = text[1:]
         if meta_token in text:
             text.remove(meta_token)
+    
+    text_linked = collapse_char.join(text)
+
+    if word_level:
+        punct = '\\n\\t'
+        text_linked = re.sub(" ([{}]) ".format(punct), r'\1', text_linked)
+    
+    return text_linked, end
 
 
 def text_generation_encode_sequence(text, vocab, maxlen):
