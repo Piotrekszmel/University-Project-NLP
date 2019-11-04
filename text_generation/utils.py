@@ -142,3 +142,11 @@ def textgenrnn_texts_from_file_context(file_path, header=True):
             context_labels.append(row[1])
 
     return (texts, context_labels)
+
+
+def text_generation_encode_cat(chars, vocab):
+    a = np.zeros((len(chars), len(vocab) + 1))
+    rows, cols = zip(*[(i, vocab.get(char, 0))
+                       for i, char in enumerate(chars)])
+    a[rows, cols] = 1
+    return a
