@@ -123,3 +123,22 @@ def text_generation_texts_from_file(file_path, header=True, delim="\n", is_csv=F
         else:
             texts = [line.rstrip(delim) for line in f]
     
+    return texts
+
+
+def textgenrnn_texts_from_file_context(file_path, header=True):
+    '''
+    Retrieves texts+context from a two-column CSV.
+    '''
+
+    with open(file_path, 'r', encoding='utf8', errors='ignore') as f:
+        if header:
+            f.readline()
+        texts = []
+        context_labels = []
+        reader = csv.reader(f)
+        for row in reader:
+            texts.append(row[0])
+            context_labels.append(row[1])
+
+    return (texts, context_labels)
