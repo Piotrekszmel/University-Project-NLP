@@ -105,3 +105,21 @@ def text_generation_encode_sequence(text, vocab, maxlen):
     encoded = np.array([vocab.get(val, 0) for val in text])
     
     return sequence.pad_sequences([encoded], maxlen=maxlen) 
+
+
+def text_generation_texts_from_file(file_path, header=True, delim="\n", is_csv=False):
+    '''
+    Retrieves texts from a newline-delimited file and returns as a list.
+    '''
+
+    with open(file_path, "r", encoding="utf=8", errors="ignore") as f:
+        if header:
+            f.readline()
+        if is_csv:
+            texts = []
+            reader = csv.reader(f)
+            for row in reader:
+                texts.append(row)
+        else:
+            texts = [line.rstrip(delim) for line in f]
+    
