@@ -23,7 +23,17 @@ def text_generation_model(num_classes, cfg, context_size, weights_path,
     rnn_layers = []
     for i in range(cfg["rnn_layers"]):
         prev_layer = embedded if i == 0 else rnn_layers[-1]
-        rnn_layers.append(new_rnn)
+        rnn_layers.append(new_rnn(cfg, i+1)(prev_layer))
+    
+    seq_concat = concatenate([embedded] + rnn_layers, name="rnn_concat")
+    attention = Attention(name="attention")(seq_concat)
+    output = Dense(num_classes, name="output", activation="softmax")(attention)
+
+    if context_size is None:
+        model = Model(inputs=[input], outputs=[output])
+        if weights_path is not None:
+            model.load_weights(weights_path, by_name=True)
+        model.compile(loss="categorical_crossentropy", optimizer=optimizer)
 
 
 
