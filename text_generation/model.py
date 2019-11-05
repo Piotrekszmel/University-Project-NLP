@@ -34,6 +34,21 @@ def text_generation_model(num_classes, cfg, context_size, weights_path,
         if weights_path is not None:
             model.load_weights(weights_path, by_name=True)
         model.compile(loss="categorical_crossentropy", optimizer=optimizer)
+    
+    else:
+        context_input = Input(shape=(context_size, ), name="context_input")
+        context_reshape = Reshape((context_size,), name="context_reshape")(context_input)
+        merged = concatenate([attention, context_reshape], name="concat")
+        main_output = Dense(num_classes, name="context_output", activation="softmax")(merged)
+
+        model = Model(inputs=[input, context_input],
+                      outputs=[main_output, output])
+        if weights_path is not None:
+            model.load_weights(weights_path, by_name=True)
+        model.compile(loss='categorical_crossentropy', optimizer=optimizer,
+                      loss_weights=[0.8, 0.2])
+        
+        return model
 
 
 
