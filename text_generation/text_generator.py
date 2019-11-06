@@ -105,8 +105,80 @@ class text_generator:
                     save_epochs=0,
                     **kwargs):
 
-    pass
+    if new_model and not via_new_model:
+      self.train_new_model(texts,
+                          context_labels=context_labels,
+                          num_epochs=num_epochs,
+                          gen_epochs=gen_epochs,
+                          train_size=train_size,
+                          batch_size=batch_size,
+                          dropout=dropout,
+                          validation=validation,
+                          save_epochs=save_epochs,
+                          **kwargs)
+      return
 
+    if context_labels:
+      context_labels = LabelBinarizer().fit_transform(context_labels)
+    
+    if "prop_keep" in kwargs:
+      train_size = kwargs["prop_keep"]
+    
+    if self.config["word_level"]:
+      texts = [text_to_word_sequence(text, filters="") for text in texts]
+    
+    # calculate all combinations of text indices + token indices
+    indices_list = [np.meshgrid(np.array(i), np.arange(len(text) + 1)) for i, text in enumerate(texts)]
+    indices_list = np.block(indices_list)
+
+    if self.config['single_text']:
+      indices_list = indices_list[self.config['max_length']:-2, :]
+    
+    indices_mask = np.random.rand(indices_list.shape[0]) < train_size
+
+    if train_size < 1.0 and validation:
+      indices_list_val = indices_list[~indices_mask, :]
+      gen_val = generate_sequences_from_texts(texts, indices_list_val,
+                                              self, context_labels, batch_size)
+      val_steps = max(int(np.floor(indices_list_val.shape[0] / batch_size)), 1)
+
+      indices_list = indices_list[indices_mask, :]
+
+      num_tokens = indices_list.shape[0]
+      assert num_tokens >= batch_size, "Fewer tokens than batch_size."
+
+      level = "word" if self.config["word_level"] else "character"
+      print("Training on {:,} {} sequences.".format(num_tokens, level))
+
+      steps_per_epoch = max(int(np.floor(num_tokens / batch_size)), 1)
+
+      gen = generate_sequences_from_texts(
+      texts, indices_list, self, context_labels, batch_size)
+
+      base_lr = 4e-3
+
+      def lr_linear_decay(epoch):
+        return (base_lr * (1 - (epoch / num_epochs)))
+      
+      if context_labels is not None: 
+        if new_model:
+          weights_path = None
+
+        else:
+          weights_path = "{}_weights.hdf5".format(self.config['name'])
+          self.save(weights_path)
+        
+        self.model = text_generation_model(self.num_classes)
+    
+
+
+  def save(self, weights_path="textgenrnn_weights_saved.hdf5"):
+    self.model.save_weights(weights_path)
+  
+  def load(self, weights_path):
+    self.model = textgenrnn_model(self.num_classes,
+                                      cfg=self.config,
+                                      weights_path=weights_path)
 
   def train_new_model(self, texts, context_labels=None, num_epochs=50,
                       gen_epochs=1, batch_size=128, dropout=0.0,
@@ -163,4 +235,5 @@ class text_generator:
                             validation=validation,
                             save_epochs=save_epochs,
                             **kwargs)
+
 
