@@ -60,4 +60,33 @@ class text_generator:
                                        cfg=self.config,
                                        weights_path=weights_path)
     self.indices_char = dict((self.vocab[c], c) for c in self.vocab)
+  
+  def generate(self, n=1, return_as_list=False, prefix=None,
+                 temperature=[1.0, 0.5, 0.2, 0.2],
+                 max_gen_length=300, interactive=False,
+                 top_n=3, progress=True):
     
+    gen_texts = []
+    iterable = trange(n) if progress and n > 1 else range(n)
+    for _ in iterable:
+      gen_text, _ = text_generation_generate(self.model,
+                                             self.vocab,
+                                             self.indices_char,
+                                             temperature,
+                                             self.config["max_length"],
+                                             self.META_TOKEN,
+                                             self.config["word_level"],
+                                             self.config.get("single_text", False),
+                                             max_gen_length,
+                                             top_n,
+                                             prefix)
+      if not return_as_list:
+        print("{}\n".format(gen_text))
+      gen_texts.append(gen_text)
+    if return_as_list:
+      return gen_texts
+  
+  def generate_samples(self, n=3, temperatures=[0.2, 0.5, 1.0], **kwargs):
+    for temperature in temperatures:
+      print('#'*20 + '\nTemperature: {}\n'.format(temperature) + '#'*20)
+      self.generate(n, temperature=temperature, progress=False, **kwargs)
