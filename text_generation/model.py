@@ -6,7 +6,7 @@ from keras import backend as K
 from Attention import Attention
 
 
-def text_generation_model(num_classes, cfg, context_size, weights_path,
+def text_generation_model(num_classes, cfg, context_size=None, weights_path,
                           dropout=0.0, optimizer=RMSprop(lr=4e-3, rho=0.99)):
     '''
     Builds the model architecture for text generation and
