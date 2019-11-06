@@ -90,3 +90,77 @@ class text_generator:
     for temperature in temperatures:
       print('#'*20 + '\nTemperature: {}\n'.format(temperature) + '#'*20)
       self.generate(n, temperature=temperature, progress=False, **kwargs)
+
+  def train_on_texts(self, texts, context_labels=None,
+                    batch_size=128,
+                    num_epochs=50,
+                    verbose=1,
+                    new_model=False,
+                    gen_epochs=1,
+                    train_size=1.0,
+                    max_gen_length=300,
+                    validation=True,
+                    dropout=0.0,
+                    via_new_model=False,
+                    save_epochs=0,
+                    **kwargs):
+
+    pass
+
+
+  def train_new_model(self, texts, context_labels=None, num_epochs=50,
+                      gen_epochs=1, batch_size=128, dropout=0.0,
+                      train_size=1.0,
+                      validation=True, save_epochs=0,
+                      **kwargs):
+
+    self.config = self.default_config.copy()
+    self.config.update(**kwargs)
+
+    print("Training new model w/ {}-layer, {}-cell {}LSTMs".format(
+            self.config['rnn_layers'], self.config['rnn_size'],
+            'Bidirectional ' if self.config['rnn_bidirectional'] else ''))
+
+    if self.config['word_level']:
+      punct = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~\\n\\t\'‘’“”’–—'
+      for i in range(len(texts)):
+        texts[i] = re.sub('([{}])'.format(punct), r' \1 ', texts[i])
+        texts[i] = re.sub(' {2,}', ' ', texts[i])
+    
+    self.tokenizer = Tokenizer(filters="", lower=self.config["word_level"],
+                              char_level=(not self.config["word_level"]))
+    self.tokenizer.fit_on_texts(texts)
+
+    max_words = self.config("max_words")
+    self.tokenizer.word_index = {k: v for (
+            k, v) in self.tokenizer.word_index.items() if v <= max_words}
+    
+    if not self.config.get("single_text", False):
+      self.tokenizer.word_index[self.META_TOKEN] = len(self.tokenizer.word_index) + 1
+    
+    self.vocab= self.tokenizer.word_index
+    self.num_classes = len(self.vocab) + 1
+    self.indices_char = dict((self.vocab[c], c) for c in self.vocab)
+
+    self_model = text_generation_model(self.num_classes,
+                                      dropout=dropout,
+                                      cfg=self.config)
+    
+    with open('{}_vocab.json'.format(self.config['name']), 'w', encoding='utf8') as outfile:
+      json.dump(self.tokenizer.word_index, outfile, ensure_ascii=False)
+
+    with open('{}_config.json'.format(self.config['name']), 'w', encoding='utf8') as outfile:
+      json.dump(self.config, outfile, ensure_ascii=False)
+    
+    self.train_on_texts(texts, new_model=True,
+                            via_new_model=True,
+                            context_labels=context_labels,
+                            num_epochs=num_epochs,
+                            gen_epochs=gen_epochs,
+                            train_size=train_size,
+                            batch_size=batch_size,
+                            dropout=dropout,
+                            validation=validation,
+                            save_epochs=save_epochs,
+                            **kwargs)
+
