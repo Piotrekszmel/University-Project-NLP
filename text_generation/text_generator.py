@@ -168,7 +168,27 @@ class text_generator:
           weights_path = "{}_weights.hdf5".format(self.config['name'])
           self.save(weights_path)
         
-        self.model = text_generation_model(self.num_classes)
+        self.model = text_generation_model(self.num_classes,
+                                          dropout=dropout,
+                                          cfg=self.config,
+                                          context_size=context_labels.shape[1],
+                                          weights_path=weights_path)
+      
+      model_t = self.model
+
+      model_t.fit_generator(gen, steps_per_epoch=steps_per_epoch,
+                            epochs=num_epochs,
+                            callbacks=[
+                              LearningRateScheduler(lr_linear_decay),
+                              generate_after_epoch(self, gen_epochs, max_gen_length),
+                              save_model_weights(self, num_epochs,save_epochs)],
+                            verbose=verbose,
+                            max_queue_size=10,
+                            validation_data=gen_val,
+                            validation_steps=val_steps)
+      
+      if context_labels is not None:
+        self.model = Model(inputs=self.model.input[0], outputs=self.model.output[1])
     
 
 
@@ -176,9 +196,24 @@ class text_generator:
     self.model.save_weights(weights_path)
   
   def load(self, weights_path):
-    self.model = textgenrnn_model(self.num_classes,
+    self.model = text_generation_model(self.num_classes,
                                       cfg=self.config,
                                       weights_path=weights_path)
+  
+  def train_from_file(self, file_path, header=True, delim="\n", 
+                      new_model=False, context=None, is_csv=False, **kwargs):
+    
+    context_labels = None
+    if context:
+      texts, context_labels = text_generation_texts_from_file_context(file_path)
+    else:
+      texts = text_generation_texts_from_file(file_path, header, delim, is_csv)
+    
+    print("{:,} texts collected.".format(len(texts)))
+    if new_model:
+      self.train_new_model(texts, context_labels=context_labels, **kwargs)
+    else:
+      self.train_on_texts(texts, context_labels=context_labels, **kwargs)
 
   def train_new_model(self, texts, context_labels=None, num_epochs=50,
                       gen_epochs=1, batch_size=128, dropout=0.0,
@@ -235,5 +270,61 @@ class text_generator:
                             validation=validation,
                             save_epochs=save_epochs,
                             **kwargs)
+  
+  def generate_to_file(self, destination_path, **kwargs):
+    texts = self.generate(return_as_list=True, **kwargs)
+    with open(destination_path, "w") as f:
+      for text in texts:
+        f.write("{}\n".format(text))
+  
+  def encode_text_vectors(self, texts, pca_dims=50, tsne_dims=None,
+                          tsne_seed=None, return_pca=False,
+                          return_tsne=False):
+    if isinstance(texts, str):
+      texts = [texts]
 
+    vector_output = Model(inputs=self.model.input,
+                              outputs=self.model.get_layer('attention').output)
+    encoded_vectors = []
+    maxlen = self.config['max_length']
+    for text in texts:
+      if self.config['word_level']:
+        text = text_to_word_sequence(text, filters='')
+      text_aug = [self.META_TOKEN] + list(text[0:maxlen])
+      encoded_text = text_generation_encode_sequence(text_aug, self.vocab,
+                                                      maxlen)
+      encoded_vector = vector_output.predict(encoded_text)
+      encoded_vectors.append(encoded_vector)
 
+    encoded_vectors = np.squeeze(np.array(encoded_vectors), axis=1)
+    if pca_dims is not None:
+      assert len(texts) > 1, "Must use more than 1 text for PCA"
+      pca = PCA(pca_dims)
+      encoded_vectors = pca.fit_transform(encoded_vectors)
+
+    if tsne_dims is not None:
+      tsne = TSNE(tsne_dims, random_state=tsne_seed)
+      encoded_vectors = tsne.fit_transform(encoded_vectors)
+
+    return_objects = encoded_vectors
+    if return_pca or return_tsne:
+      return_objects = [return_objects]
+    if return_pca:
+      return_objects.append(pca)
+    if return_tsne:
+      return_objects.append(tsne)
+
+    return return_objects
+
+  def similarity(self, text, texts, use_pca=True):
+    text_encoded = self.encode_text_vectors(text, pca_dims=None)
+    if use_pca:
+      texts_encoded, pca = self.encode_text_vectors(texts, return_pca=True)
+      text_encoded = pca.transform(text_encoded)
+    else:
+      texts_encoded = self.encode_text_vectors(texts, pca_dims=None)
+
+    cos_similairity = cosine_similarity(text_encoded, texts_encoded)[0]
+    text_sim_pairs = list(zip(texts, cos_similairity))
+    text_sim_pairs = sorted(text_sim_pairs, key=lambda x: -x[1])
+    return text_sim_pairs

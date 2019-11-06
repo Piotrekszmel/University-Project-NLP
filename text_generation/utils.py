@@ -126,7 +126,7 @@ def text_generation_texts_from_file(file_path, header=True, delim="\n", is_csv=F
     return texts
 
 
-def textgenrnn_texts_from_file_context(file_path, header=True):
+def text_generation_texts_from_file_context(file_path, header=True):
     '''
     Retrieves texts+context from a two-column CSV.
     '''
