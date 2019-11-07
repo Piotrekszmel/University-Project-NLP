@@ -38,10 +38,10 @@ class text_generator:
   def __init__(self, weights_path=None, vocab_path=None, config_path=None, name="text_generator"):
     
     if weights_path is None:
-      weights_path = resource_filename(__name__, "text_generator_weights.hdf5")
+      weights_path = resource_filename(__name__, "text_generation_weights.hdf5")
     
     if vocab_path is None:
-      vocab_path = resource_filename(__name__, "text_generator_vocab.json")
+      vocab_path = resource_filename(__name__, "text_generation_vocab.json")
     
     if config_path is not None:
       with open("config_path", "r", encoding="utf-8", errors="ignore") as json_file:
@@ -106,6 +106,7 @@ class text_generator:
                     **kwargs):
 
     if new_model and not via_new_model:
+      
       self.train_new_model(texts,
                           context_labels=context_labels,
                           num_epochs=num_epochs,
@@ -135,48 +136,50 @@ class text_generator:
       indices_list = indices_list[self.config['max_length']:-2, :]
     
     indices_mask = np.random.rand(indices_list.shape[0]) < train_size
-
+    
+    gen_val = None
+    val_steps = None
     if train_size < 1.0 and validation:
       indices_list_val = indices_list[~indices_mask, :]
       gen_val = generate_sequences_from_texts(texts, indices_list_val,
                                               self, context_labels, batch_size)
       val_steps = max(int(np.floor(indices_list_val.shape[0] / batch_size)), 1)
 
-      indices_list = indices_list[indices_mask, :]
+    indices_list = indices_list[indices_mask, :]
 
-      num_tokens = indices_list.shape[0]
-      assert num_tokens >= batch_size, "Fewer tokens than batch_size."
+    num_tokens = indices_list.shape[0]
+    assert num_tokens >= batch_size, "Fewer tokens than batch_size."
+      
+    level = "word" if self.config["word_level"] else "character"
+    print("Training on {:,} {} sequences.".format(num_tokens, level))
 
-      level = "word" if self.config["word_level"] else "character"
-      print("Training on {:,} {} sequences.".format(num_tokens, level))
+    steps_per_epoch = max(int(np.floor(num_tokens / batch_size)), 1)
 
-      steps_per_epoch = max(int(np.floor(num_tokens / batch_size)), 1)
+    gen = generate_sequences_from_texts(
+    texts, indices_list, self, context_labels, batch_size)
 
-      gen = generate_sequences_from_texts(
-      texts, indices_list, self, context_labels, batch_size)
+    base_lr = 4e-3
 
-      base_lr = 4e-3
-
-      def lr_linear_decay(epoch):
+    def lr_linear_decay(epoch):
         return (base_lr * (1 - (epoch / num_epochs)))
       
-      if context_labels is not None: 
-        if new_model:
-          weights_path = None
+    if context_labels is not None: 
+      if new_model:
+        weights_path = None
 
-        else:
-          weights_path = "{}_weights.hdf5".format(self.config['name'])
-          self.save(weights_path)
+      else:
+        weights_path = "{}_weights.hdf5".format(self.config['name'])
+        self.save(weights_path)
         
-        self.model = text_generation_model(self.num_classes,
+      self.model = text_generation_model(self.num_classes,
                                           dropout=dropout,
                                           cfg=self.config,
                                           context_size=context_labels.shape[1],
                                           weights_path=weights_path)
       
-      model_t = self.model
+    model_t = self.model
 
-      model_t.fit_generator(gen, steps_per_epoch=steps_per_epoch,
+    model_t.fit_generator(gen, steps_per_epoch=steps_per_epoch,
                             epochs=num_epochs,
                             callbacks=[
                               LearningRateScheduler(lr_linear_decay),
@@ -187,8 +190,8 @@ class text_generator:
                             validation_data=gen_val,
                             validation_steps=val_steps)
       
-      if context_labels is not None:
-        self.model = Model(inputs=self.model.input[0], outputs=self.model.output[1])
+    if context_labels is not None:
+      self.model = Model(inputs=self.model.input[0], outputs=self.model.output[1])
     
 
 
@@ -238,7 +241,7 @@ class text_generator:
                               char_level=(not self.config["word_level"]))
     self.tokenizer.fit_on_texts(texts)
 
-    max_words = self.config("max_words")
+    max_words = self.config["max_words"]
     self.tokenizer.word_index = {k: v for (
             k, v) in self.tokenizer.word_index.items() if v <= max_words}
     
@@ -248,8 +251,8 @@ class text_generator:
     self.vocab= self.tokenizer.word_index
     self.num_classes = len(self.vocab) + 1
     self.indices_char = dict((self.vocab[c], c) for c in self.vocab)
-
-    self_model = text_generation_model(self.num_classes,
+    
+    self.model = text_generation_model(self.num_classes,
                                       dropout=dropout,
                                       cfg=self.config)
     
@@ -277,6 +280,15 @@ class text_generator:
       for text in texts:
         f.write("{}\n".format(text))
   
+  def train_from_largetext_file(self, file_path, new_model=True, **kwargs):
+    with open(file_path, 'r', encoding='utf8', errors='ignore') as f:
+      texts = [f.read()]
+
+    if new_model:
+      self.train_new_model(texts, single_text=True, **kwargs)
+    else:
+      self.train_on_texts(texts, single_text=True, **kwargs)
+
   def encode_text_vectors(self, texts, pca_dims=50, tsne_dims=None,
                           tsne_seed=None, return_pca=False,
                           return_tsne=False):

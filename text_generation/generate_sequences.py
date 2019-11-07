@@ -11,7 +11,7 @@ import numpy as np
 def generate_sequences_from_texts(texts, indices_list, text_gen, context_labels, batch_size=128):
   word_level = text_gen.config["word_level"]
   single_text = text_gen.config["single_text"]
-  max_length = text_gen.config["max_len"]
+  max_length = text_gen.config["max_length"]
   meta_token = text_gen.META_TOKEN
 
   if word_level:
@@ -58,7 +58,7 @@ def generate_sequences_from_texts(texts, indices_list, text_gen, context_labels,
 
         if count_batch % batch_size == 0:
           X_batch = np.squeeze(np.array(X_batch))
-          Y_batch = np.squeeze(np.array(Y_batch))
+          y_batch = np.squeeze(np.array(y_batch))
           context_batch = np.squeeze(np.array(context_batch))
 
           if context_labels is not None:

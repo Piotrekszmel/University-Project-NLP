@@ -12,7 +12,7 @@ def text_generation_model(num_classes, cfg, context_size=None, weights_path=None
     Builds the model architecture for text generation and
     loads the specified weights for the model.
     '''
-    print(num_classes, cfg, weights_path, "\n\n\n")
+    
     input = Input(shape=(cfg["max_length"], ), name="input")
     embedded = Embedding(num_classes, cfg["dim_embeddings"], input_length=cfg["max_length"],
                       name="embedding")(input)
