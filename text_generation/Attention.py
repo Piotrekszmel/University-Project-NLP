@@ -4,53 +4,60 @@ from keras import initializers
 
 
 class Attention(Layer):
-    def __init__(self, return_attention=True, **kwargs):
+    """
+    Computes a weighted average of the different channels across timesteps.
+    Uses 1 parameter pr. channel to compute the attention value for
+    a single timestep.
+    """
+
+    def __init__(self, return_attention=False, **kwargs):
         self.init = initializers.get('uniform')
         self.supports_masking = True
         self.return_attention = return_attention
-        super().__init__(**kwargs)
-    
+        super().__init__(** kwargs)
+
     def build(self, input_shape):
         self.input_spec = [InputSpec(ndim=3)]
         assert len(input_shape) == 3
 
-        self.W = self.add_weight(shape=(input_shape[-1], 1),
-                                 name="{}_W".format(self.name),
+        self.W = self.add_weight(shape=(input_shape[2], 1),
+                                 name='{}_W'.format(self.name),
                                  initializer=self.init)
         self.trainable_weights = [self.W]
         super().build(input_shape)
-    
+
     def call(self, x, mask=None):
+        # computes a probability distribution over the timesteps
+        # uses 'max trick' for numerical stability
+        # reshape is done to avoid issue with Tensorflow
+        # and 1-dimensional weights
+        logits = K.dot(x, self.W)
         x_shape = K.shape(x)
-        
-        eij = K.dot(x, self.W)
-        eij = K.reshape(eij, (x_shape[0], x_shape[1]))
-        eij = K.tanh(eij)
-        
-        a = K.exp(eij)
+        logits = K.reshape(logits, (x_shape[0], x_shape[1]))
+        ai = K.exp(logits - K.max(logits, axis=-1, keepdims=True))
 
+        # masked timesteps have zero weight
         if mask is not None:
-            a *= K.cast(mask, K.floatx())
-        
-        a /= K.cast(K.sum(a, axis=1, keepdims=True) + K.epsilon(), K.floatx())
-
-        weighted_input = x * K.expand_dims(a)
-
+            mask = K.cast(mask, K.floatx())
+            ai = ai * mask
+        att_weights = ai / (K.sum(ai, axis=1, keepdims=True) + K.epsilon())
+        weighted_input = x * K.expand_dims(att_weights)
         result = K.sum(weighted_input, axis=1)
-
         if self.return_attention:
-            [result, a]
-        
+            return [result, att_weights]
         return result
 
+    def get_output_shape_for(self, input_shape):
+        return self.compute_output_shape(input_shape)
+
     def compute_output_shape(self, input_shape):
+        output_len = input_shape[2]
         if self.return_attention:
-            [input_shape[0], input_shape[-1],
-            input_shape[0], input_shape[1]]
-        else:
-            return [input_shape[0], input_shape[-1]]
-    
-    def compute_mask(self, inputs, input_mask=None):
+            return [(input_shape[0], output_len), (input_shape[0],
+                                                   input_shape[1])]
+        return (input_shape[0], output_len)
+
+    def compute_mask(self, input, input_mask=None):
         if isinstance(input_mask, list):
             return [None] * len(input_mask)
         else:

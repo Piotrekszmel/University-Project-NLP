@@ -35,7 +35,7 @@ class text_generator:
 
   default_config = config.copy()
   
-  def __init__(self, weights_path, vocab_path, config_path, name="text_generator"):
+  def __init__(self, weights_path=None, vocab_path=None, config_path=None, name="text_generator"):
     
     if weights_path is None:
       weights_path = resource_filename(__name__, "text_generator_weights.hdf5")

@@ -12,8 +12,8 @@ def text_generation_model(num_classes, cfg, context_size=None, weights_path=None
     Builds the model architecture for text generation and
     loads the specified weights for the model.
     '''
-
-    input = Input(cfg["max_length", ], name="input")
+    print(num_classes, cfg, weights_path, "\n\n\n")
+    input = Input(shape=(cfg["max_length"], ), name="input")
     embedded = Embedding(num_classes, cfg["dim_embeddings"], input_length=cfg["max_length"],
                       name="embedding")(input)
   
@@ -48,7 +48,7 @@ def text_generation_model(num_classes, cfg, context_size=None, weights_path=None
         model.compile(loss='categorical_crossentropy', optimizer=optimizer,
                       loss_weights=[0.8, 0.2])
         
-        return model
+    return model
 
 
 
