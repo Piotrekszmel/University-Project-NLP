@@ -6,7 +6,7 @@ model_cfg = {
     'rnn_layers': 3,   # number of LSTM layers (>=2 recommended)
     'rnn_bidirectional': False,   # consider text both forwards and backward, can give a training boost
     'max_length': 30,   # number of tokens to consider before predicting the next (20-40 for characters, 5-10 for words recommended)
-    'max_words': 40000,   # maximum number of words to model; the rest will be ignored (word-level model only)
+    'max_words': 10000,   # maximum number of words to model; the rest will be ignored (word-level model only)
 }
 
 train_cfg = {
@@ -19,7 +19,7 @@ train_cfg = {
     'is_csv': False   # set to True if file is a CSV exported from Excel/BigQuery/pandas
 }
 
-model_name = 'colaboratory'
+model_name = 'shakespeare_testing'
 file_name = "shakespeare.txt" 
 
 textgen = text_generator(name=model_name)
