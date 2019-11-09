@@ -35,7 +35,7 @@ class text_generator:
 
   default_config = config.copy()
   
-  def __init__(self, weights_path=None, vocab_path=None, config_path=None, name="text_generator"):
+  def __init__(self, weights_path=None, vocab_path=None, config_path=None, name="text_generatorion"):
     
     if weights_path is None:
       weights_path = resource_filename(__name__, "text_generation_weights.hdf5")
@@ -91,7 +91,7 @@ class text_generator:
       print('#'*20 + '\nTemperature: {}\n'.format(temperature) + '#'*20)
       self.generate(n, temperature=temperature, progress=False, **kwargs)
 
-    def train_on_texts(self, texts, context_labels=None,
+  def train_on_texts(self, texts, context_labels=None,
                        batch_size=128,
                        num_epochs=50,
                        verbose=1,
