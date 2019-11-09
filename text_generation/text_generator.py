@@ -91,107 +91,120 @@ class text_generator:
       print('#'*20 + '\nTemperature: {}\n'.format(temperature) + '#'*20)
       self.generate(n, temperature=temperature, progress=False, **kwargs)
 
-  def train_on_texts(self, texts, context_labels=None,
-                    batch_size=128,
-                    num_epochs=50,
-                    verbose=1,
-                    new_model=False,
-                    gen_epochs=1,
-                    train_size=1.0,
-                    max_gen_length=300,
-                    validation=True,
-                    dropout=0.0,
-                    via_new_model=False,
-                    save_epochs=0,
-                    **kwargs):
+    def train_on_texts(self, texts, context_labels=None,
+                       batch_size=128,
+                       num_epochs=50,
+                       verbose=1,
+                       new_model=False,
+                       gen_epochs=1,
+                       train_size=1.0,
+                       max_gen_length=300,
+                       validation=True,
+                       dropout=0.0,
+                       via_new_model=False,
+                       save_epochs=0,
+                       multi_gpu=False,
+                       **kwargs):
 
-    if new_model and not via_new_model:
-      
-      self.train_new_model(texts,
-                          context_labels=context_labels,
-                          num_epochs=num_epochs,
-                          gen_epochs=gen_epochs,
-                          train_size=train_size,
-                          batch_size=batch_size,
-                          dropout=dropout,
-                          validation=validation,
-                          save_epochs=save_epochs,
-                          **kwargs)
-      return
+        if new_model and not via_new_model:
+            self.train_new_model(texts,
+                                context_labels=context_labels,
+                                num_epochs=num_epochs,
+                                gen_epochs=gen_epochs,
+                                train_size=train_size,
+                                batch_size=batch_size,
+                                dropout=dropout,
+                                validation=validation,
+                                save_epochs=save_epochs,
+                                **kwargs)
+            return
 
-    if context_labels:
-      context_labels = LabelBinarizer().fit_transform(context_labels)
-    
-    if "prop_keep" in kwargs:
-      train_size = kwargs["prop_keep"]
-    
-    if self.config["word_level"]:
-      texts = [text_to_word_sequence(text, filters="") for text in texts]
-    
-    # calculate all combinations of text indices + token indices
-    indices_list = [np.meshgrid(np.array(i), np.arange(len(text) + 1)) for i, text in enumerate(texts)]
-    indices_list = np.block(indices_list)
+        if context_labels:
+            context_labels = LabelBinarizer().fit_transform(context_labels)
 
-    if self.config['single_text']:
-      indices_list = indices_list[self.config['max_length']:-2, :]
-    
-    indices_mask = np.random.rand(indices_list.shape[0]) < train_size
-    
-    gen_val = None
-    val_steps = None
-    if train_size < 1.0 and validation:
-      indices_list_val = indices_list[~indices_mask, :]
-      gen_val = generate_sequences_from_texts(texts, indices_list_val,
-                                              self, context_labels, batch_size)
-      val_steps = max(int(np.floor(indices_list_val.shape[0] / batch_size)), 1)
+        if 'prop_keep' in kwargs:
+            train_size = kwargs["prop_keep"]
 
-    indices_list = indices_list[indices_mask, :]
+        if self.config['word_level']:
+            texts = [text_to_word_sequence(text, filters='') for text in texts]
 
-    num_tokens = indices_list.shape[0]
-    assert num_tokens >= batch_size, "Fewer tokens than batch_size."
-      
-    level = "word" if self.config["word_level"] else "character"
-    print("Training on {:,} {} sequences.".format(num_tokens, level))
+        # calculate all combinations of text indices + token indices
+        indices_list = [np.meshgrid(np.array(i), np.arange(
+            len(text) + 1)) for i, text in enumerate(texts)]
+        indices_list = np.block(indices_list)
 
-    steps_per_epoch = max(int(np.floor(num_tokens / batch_size)), 1)
+        # If a single text, there will be 2 extra indices, so remove them
+        # Also remove first sequences which use padding
+        if self.config['single_text']:
+            indices_list = indices_list[self.config['max_length']:-2, :]
 
-    gen = generate_sequences_from_texts(
-    texts, indices_list, self, context_labels, batch_size)
+        indices_mask = np.random.rand(indices_list.shape[0]) < train_size
 
-    base_lr = 4e-3
-
-    def lr_linear_decay(epoch):
-        return (base_lr * (1 - (epoch / num_epochs)))
-      
-    if context_labels is not None: 
-      if new_model:
-        weights_path = None
-
-      else:
-        weights_path = "{}_weights.hdf5".format(self.config['name'])
-        self.save(weights_path)
         
-      self.model = text_generation_model(self.num_classes,
+
+        gen_val = None
+        val_steps = None
+        if train_size < 1.0 and validation:
+            indices_list_val = indices_list[~indices_mask, :]
+            gen_val = generate_sequences_from_texts(
+                texts, indices_list_val, self, context_labels, batch_size)
+            val_steps = max(
+                int(np.floor(indices_list_val.shape[0] / batch_size)), 1)
+
+        indices_list = indices_list[indices_mask, :]
+
+        num_tokens = indices_list.shape[0]
+        assert num_tokens >= batch_size, "Fewer tokens than batch_size."
+
+        level = 'word' if self.config['word_level'] else 'character'
+        print("Training on {:,} {} sequences.".format(num_tokens, level))
+
+        steps_per_epoch = max(int(np.floor(num_tokens / batch_size)), 1)
+
+        gen = generate_sequences_from_texts(
+            texts, indices_list, self, context_labels, batch_size)
+
+        base_lr = 4e-3
+
+        # scheduler function must be defined inline.
+        def lr_linear_decay(epoch):
+            return (base_lr * (1 - (epoch / num_epochs)))
+
+        if context_labels is not None:
+            if new_model:
+                weights_path = None
+            else:
+                weights_path = "{}_weights.hdf5".format(self.config['name'])
+                self.save(weights_path)
+
+            self.model = text_generation_model(self.num_classes,
                                           dropout=dropout,
                                           cfg=self.config,
                                           context_size=context_labels.shape[1],
                                           weights_path=weights_path)
-      
-    model_t = self.model
 
-    model_t.fit_generator(gen, steps_per_epoch=steps_per_epoch,
-                            epochs=num_epochs,
-                            callbacks=[
-                              LearningRateScheduler(lr_linear_decay),
-                              generate_after_epoch(self, gen_epochs, max_gen_length),
-                              save_model_weights(self, num_epochs,save_epochs)],
-                            verbose=verbose,
-                            max_queue_size=10,
-                            validation_data=gen_val,
-                            validation_steps=val_steps)
-      
-    if context_labels is not None:
-      self.model = Model(inputs=self.model.input[0], outputs=self.model.output[1])
+        model_t = self.model
+        model_t.fit_generator(gen, steps_per_epoch=steps_per_epoch,
+                              epochs=num_epochs,
+                              callbacks=[
+                                  LearningRateScheduler(
+                                      lr_linear_decay),
+                                  generate_after_epoch(
+                                      self, gen_epochs,
+                                      max_gen_length),
+                                  save_model_weights(
+                                      self, num_epochs,
+                                      save_epochs)],
+                              verbose=verbose,
+                              max_queue_size=10,
+                              validation_data=gen_val,
+                              validation_steps=val_steps
+                              )
+
+        # Keep the text-only version of the model if using context labels
+        if context_labels is not None:
+            self.model = Model(inputs=self.model.input[0],
+                               outputs=self.model.output[1])  
     
 
 
