@@ -20,7 +20,7 @@ train_cfg = {
 }
 
 model_name = 'shakespeare_testing'
-file_name = "shakespeare.txt" 
+file_name = "datasets/shakespeare.txt" 
 
 textgen = text_generator(name=model_name)
 
@@ -42,13 +42,13 @@ train_function(
     max_length=model_cfg['max_length'],
     dim_embeddings=100,
     word_level=model_cfg['word_level'])
-"""
+
 
 textgen = text_generator(weights_path='shakespeare_testing_weights.hdf5',
                        vocab_path='shakespeare_testing_vocab.json',
                        config_path='shakespeare_testing_config.json')
                        
 textgen.generate_samples(max_gen_length=1000)
-textgen.generate_to_file('textgenrnn_texts.txt', max_gen_length=1000)
+textgen.generate_to_file('text_generation_texts.txt', max_gen_length=1000)
 
-
+"""

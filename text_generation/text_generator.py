@@ -41,11 +41,11 @@ class text_generator:
 
         if weights_path is None:
             weights_path = resource_filename(__name__,
-                                             'text_generation_weights.hdf5')
+                                             'weights/text_generation_weights.hdf5')
 
         if vocab_path is None:
             vocab_path = resource_filename(__name__,
-                                           'text_generation_vocab.json')
+                                           'weights.text_generation_vocab.json')
 
         if config_path is not None:
             with open(config_path, 'r',
@@ -185,7 +185,7 @@ class text_generator:
             if new_model:
                 weights_path = None
             else:
-                weights_path = "{}_weights.hdf5".format(self.config['name'])
+                weights_path = "weights/{}_weights.hdf5".format(self.config['name'])
                 self.save(weights_path)
 
             self.model = text_generation_model(self.num_classes,
@@ -276,11 +276,11 @@ class text_generator:
                                       cfg=self.config)
 
         # Save the files needed to recreate the model
-        with open('{}_vocab.json'.format(self.config['name']),
+        with open('vocabs/{}_vocab.json'.format(self.config['name']),
                   'w', encoding='utf8') as outfile:
             json.dump(self.tokenizer.word_index, outfile, ensure_ascii=False)
 
-        with open('{}_config.json'.format(self.config['name']),
+        with open('configs/{}_config.json'.format(self.config['name']),
                   'w', encoding='utf8') as outfile:
             json.dump(self.config, outfile, ensure_ascii=False)
 
@@ -297,7 +297,7 @@ class text_generator:
                             multi_gpu=multi_gpu,
                             **kwargs)
 
-    def save(self, weights_path="text_generation_weights_saved.hdf5"):
+    def save(self, weights_path="weights/text_generation_weights_saved.hdf5"):
         self.model.save_weights(weights_path)
 
     def load(self, weights_path):
