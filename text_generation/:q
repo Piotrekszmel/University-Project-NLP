@@ -44,7 +44,7 @@ train_function(
     word_level=model_cfg['word_level'])
 """
 
-textgen = text_generator(weights_path='shakespeare_testing_weights.hdf5',
+textgen = textgenrnn(weights_path='shakespeare_testing_weights.hdf5',
                        vocab_path='shakespeare_testing_vocab.json',
                        config_path='shakespeare_testing_config.json')
                        

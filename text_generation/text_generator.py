@@ -15,12 +15,12 @@ import h5py
 from pkg_resources import resource_filename
 from model import text_generation_model
 from generate_sequences import *
-from .utils import *
+from utils import *
 import csv
 import re
 
 
-class text_generation:
+class text_generator:
     META_TOKEN = '<s>'
     config = {
         'rnn_layers': 2,
