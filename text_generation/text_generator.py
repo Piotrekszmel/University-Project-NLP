@@ -45,7 +45,7 @@ class text_generator:
 
         if vocab_path is None:
             vocab_path = resource_filename(__name__,
-                                           'weights.text_generation_vocab.json')
+                    'vocabs/text_generation_vocab.json')
 
         if config_path is not None:
             with open(config_path, 'r',
