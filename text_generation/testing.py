@@ -1,5 +1,5 @@
 from text_generator import text_generator
-
+"""
 model_cfg = {
     'word_level': False,   # set to True if want to train a word-level model (requires more data and smaller max_length)
     'rnn_size': 128,   # number of LSTM cells of each layer (128/256 recommended)
@@ -37,10 +37,10 @@ train_function(
     max_length=model_cfg['max_length'],
     dim_embeddings=100,
     word_level=model_cfg['word_level'])
-textgen = text_generator(weights_path='shakespeare_testing_weights.hdf5',
-                       vocab_path='shakespeare_testing_vocab.json',
-                       config_path='shakespeare_testing_config.json')
+"""
+textgen = text_generator(weights_path='weights/shakespeare_128_BIDIRECTIONAL_weights.hdf5',
+                       vocab_path='vocabs/shakespeare_128_BIDIRECTIONAL_vocab.json',
+                       config_path='configs/shakespeare_128_BIDIRECTIONAL_config.json')
                        
-textgen.generate_samples(max_gen_length=1000)
-textgen.generate_to_file('text_generation_texts.txt', max_gen_length=1000)
+textgen.generate_samples(max_gen_length=1000, temperatures=[0.2])
 
