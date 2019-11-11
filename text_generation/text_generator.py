@@ -19,6 +19,7 @@ from utils import *
 import csv
 import re
 
+#-*- coding: utf-8 -*
 
 class text_generator:
     META_TOKEN = '<s>'
@@ -246,7 +247,7 @@ class text_generator:
         # https://stackoverflow.com/a/3645946/9314418
 
         if self.config['word_level']:
-            punct = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~\\n\\t\'‘’“”’–—'
+            punct = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~\\n\\t\'‘’“”’--'
             for i in range(len(texts)):
                 texts[i] = re.sub('([{}])'.format(punct), r' \1 ', texts[i])
                 texts[i] = re.sub(' {2,}', ' ', texts[i])
