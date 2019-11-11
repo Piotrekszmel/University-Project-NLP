@@ -22,6 +22,7 @@ train_cfg = {
     'is_csv': False   # set to True if file is a CSV exported from Excel/BigQuery/pandas
 }
 
+"""
 texts = []
 files = glob.glob("/home/pito/Desktop/projects/University-Project-NLP/sentiment_analysis/data/datasets" + "/*.tsv")
 for file in files:
@@ -33,7 +34,7 @@ with open('datasets/twitter.txt', 'w') as f:
     for text in texts :
         f.write("{}\n".format(*text))
 
-
+"""
 
 model_name = 'twitter_128_LSTM'
 file_name = "datasets/twitter.txt" 
