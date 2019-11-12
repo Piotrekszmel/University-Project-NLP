@@ -9,9 +9,18 @@
 <body>
     <div class="ml-container" style="background-color: #1e1e1e	">
 		<div>
-				<form action="{{  url_for('index')}}" method='POST'>
-					<input class="button__back" type="submit" value="back">
-				</form>
+			<form action="{{  url_for('index')}}" method='POST'>
+				<input class="button__back" type="submit" value="back">
+			</form>
+		</div>
+		<div style="padding: 20px;">
+			<h1 style="color: white;">Choose weights for you model</h1>
+			<select class="select-css">
+				<option style="font-weight: bold;" value="text_generation_weights">BASIC WEIGHTS</option>
+				<option style="font-weight: bold;" value="english_weights">ENGLISH WEIGHTS</option>
+				<option style="font-weight: bold;" value="twitter_weights">TWITTER WEIGHTS</option>
+				<option style="font-weight: bold;" value="shakespeare_weights">SHAKESPEARE WEIGHTS</option>
+			  </select>
 		</div>
 	</div>
 </body>
