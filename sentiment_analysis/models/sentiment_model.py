@@ -20,7 +20,7 @@ np.random.seed(1337)
 
 
 
-def Sentiment_Analysis(WV_CORPUS, WV_DIM, max_length, PERSIST,  FINAL=True):
+def Sentiment_Analysis(WV_CORPUS, WV_DIM, max_length, PERSIST, TRAIN=False, FINAL=True):
   """
   ##Final:
   - if FINAL == False,  then the dataset will be split in {train, val, test}
@@ -114,16 +114,17 @@ def Sentiment_Analysis(WV_CORPUS, WV_DIM, max_length, PERSIST,  FINAL=True):
   ############################################################################
   # APPLY CLASS WEIGHTS
   ############################################################################
-  class_weights = get_class_weights2(onehot_to_categories(training[1]),
-                                    smooth_factor=0)
-  print("Class weights:",
-        {cat_to_class_mapping[c]: w for c, w in class_weights.items()})
+  if TRAIN:
+    class_weights = get_class_weights2(onehot_to_categories(training[1]),
+                                      smooth_factor=0)
+    print("Class weights:",
+          {cat_to_class_mapping[c]: w for c, w in class_weights.items()})
 
-  history = nn_model.fit(training[0], training[1],
-                        validation_data=validation if not FINAL else testing,
-                        epochs=50, batch_size=50,
-                        class_weight=class_weights)
+    history = nn_model.fit(training[0], training[1],
+                          validation_data=validation if not FINAL else testing,
+                          epochs=50, batch_size=50,
+                          class_weight=class_weights)
 
-  pickle.dump(history.history,
+    pickle.dump(history.history,
               open("sentiment.pickle", "wb"))
   

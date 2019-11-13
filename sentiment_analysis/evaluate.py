@@ -28,7 +28,7 @@ def predict_class(X, y, corpus, dim):
                                 dropout_rnn_U=0.3,
                                 clipnorm=1, lr=0.001, loss_l2=0.0001)
     
-    nn_model.load_weights('./bi_model_weights_1.h5')
+    nn_model.load_weights('sentiment_analysis/weights/bi_model_weights_1.h5')
     
     for tweet in X:
         tweet = tweet.reshape(50, 1).T
