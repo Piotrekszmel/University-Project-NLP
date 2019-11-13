@@ -32,23 +32,16 @@ def prepare_dataset(X, y, pipeline, y_one_hot=True, y_as_is=False):
 
     if y_one_hot:
         return X, categories_to_onehot(y_cat)
+    
 
 
 def get_embeddings(corpus, dim):
-    
-    """
-    return return embeddings matrix with shape (vocab_size + 2, dim) and word vectors map for that matrix
-    """
-    
     vectors = WordVectorsManager(corpus, dim).read()
     vocab_size = len(vectors)
-    
-    print("Loaded {} word vectors.".format(vocab_size))
-
+    print('Loaded {} word vectors.'.format(vocab_size))
     wv_map = {}
     pos = 0
     emb_matrix = np.ndarray((vocab_size + 2, dim), dtype="float32")
-
     for i, (word, vector) in enumerate(vectors.items()):
         if len(vector) > 199:
             pos = i + 1
@@ -63,8 +56,8 @@ def get_embeddings(corpus, dim):
 
 
 def prepare_text_only_dataset(X, pipeline):
-    X = pipeline.fit_transform(X)
-    return X
+     X = pipeline.fit_transform(X)
+     return X
 
 
 def data_splits(dataset, final=False):
@@ -100,10 +93,13 @@ def data_splits(dataset, final=False):
 
 
 class Loader:
+    
     def __init__(self, word_indices, text_lengths, **kwargs):
+
         self.word_indices = word_indices
-        self.y_one_hot = kwargs.get("y_one_hot", True)
+
         filter_classes = kwargs.get("filter_classes", None)
+        self.y_one_hot = kwargs.get("y_one_hot", True)
 
         self.pipeline = Pipeline([
             ('preprocess', CustomPreProcessor(TextPreProcessor(
@@ -124,11 +120,11 @@ class Loader:
                                         add_tokens=True,
                                         unk_policy="random"))])
 
+        # loading data
         print("Loading data...")
-
         dataset = DataLoader(verbose=False).get_data(years=None, datasets=None)
         random.Random(42).shuffle(dataset)
-        
+
         if filter_classes:
             dataset = [d for d in dataset if d[0] in filter_classes]
 
@@ -139,7 +135,7 @@ class Loader:
         print("-------------------\ntraining set stats\n-------------------")
         print_dataset_statistics(self.y)
         print("-------------------")
-    
+
 
     def load_train_val_test(self, only_test=False):
         X_train, X_rest, y_train, y_rest = train_test_split(self.X, self.y,
@@ -167,7 +163,6 @@ class Loader:
         else:
             return training, validation, testing
 
-    
     def load_final(self):
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y,
                                                             test_size=0.1,
