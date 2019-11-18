@@ -25,11 +25,11 @@ body {
   margin-bottom: 60px;
 }
 .info__title {
-  font-size: 45px;
-  color: SNOW;
+  font-size: px;
+  color:#D4AF37;
 }
 .info__description {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .container {
@@ -45,7 +45,7 @@ body {
 
 .box {
   min-height: 500px;
-  border: 5px solid #ffffff;
+  border: 5px solid white;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,7 +59,15 @@ body {
 
 }
 
+.box:hover{
+  border-color: gold;
+  box-shadow: -20px 0 25px -15px orange, 20px 0 25px -15px orange;
+  }
 
+
+.box:hover{
+  transform: scale(1.1);
+}
 
 .box_1:hover {
   color: gold;
@@ -116,16 +124,17 @@ body {
 }
 .box--featured {
   background-color:black ;
-  color: 	#FFDF00;
+  color: 	white;
   min-height: 550px;
-  box-shadow: -20px 0 25px -15px rgba(255, 255, 255, 0.3), 20px 0 25px -15px rgba(255, 255, 255, 0.3);
+  
 }
+
 .box--featured::before {
   width: 95%;
   height: 97%;
   content: "";
   position: absolute;
-  border: 5px solid white;
+  border: 5px solid ;
 }
 .box--featured::after {
   top: 1.5%;
@@ -164,6 +173,9 @@ body {
   padding: 12px 28px;
 }
 
+.box__button{
+  border-radius: 8px;
+}
 
 
 /*# sourceMappingURL=index.css.map */
