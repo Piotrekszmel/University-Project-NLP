@@ -9,18 +9,18 @@ import numpy as np
 
 
 def generate_sequences_from_texts(texts, indices_list,
-                                  textgenrnn, context_labels,
+                                  textgen, context_labels,
                                   batch_size=128):
-    is_words = textgenrnn.config['word_level']
-    is_single = textgenrnn.config['single_text']
-    max_length = textgenrnn.config['max_length']
-    meta_token = textgenrnn.META_TOKEN
+    is_words = textgen.config['word_level']
+    is_single = textgen.config['single_text']
+    max_length = textgen.config['max_length']
+    meta_token = textgen.META_TOKEN
 
     if is_words:
         new_tokenizer = Tokenizer(filters='', char_level=True)
-        new_tokenizer.word_index = textgenrnn.vocab
+        new_tokenizer.word_index = textgen.vocab
     else:
-        new_tokenizer = textgenrnn.tokenizer
+        new_tokenizer = textgen.tokenizer
 
     while True:
         np.random.shuffle(indices_list)
@@ -45,9 +45,9 @@ def generate_sequences_from_texts(texts, indices_list,
                 x = text[0: end_index + 1]
             y = text[end_index + 1]
 
-            if y in textgenrnn.vocab:
-                x = process_sequence([x], textgenrnn, new_tokenizer)
-                y = text_generation_encode_cat([y], textgenrnn.vocab)
+            if y in textgen.vocab:
+                x = process_sequence([x], textgen, new_tokenizer)
+                y = text_generation_encode_cat([y], textgen.vocab)
 
                 X_batch.append(x)
                 Y_batch.append(y)
@@ -72,9 +72,9 @@ def generate_sequences_from_texts(texts, indices_list,
                     count_batch = 0
 
 
-def process_sequence(X, textgenrnn, new_tokenizer):
+def process_sequence(X, textgen, new_tokenizer):
     X = new_tokenizer.texts_to_sequences(X)
     X = sequence.pad_sequences(
-        X, maxlen=textgenrnn.config['max_length'])
+        X, maxlen=textgen.config['max_length'])
 
     return X
