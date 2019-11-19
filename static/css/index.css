@@ -10,7 +10,7 @@ html {
 
 body {
   font-family: "Fira Code", sans-serif;
-  background-color: black;
+  background-color: #171717;
   color: SNOW;
   display: flex;
   justify-content: center;
@@ -25,11 +25,11 @@ body {
   margin-bottom: 60px;
 }
 .info__title {
-  font-size: px;
+  font-size: 60px;
   color:#D4AF37;
 }
 .info__description {
-  font-size: 16px;
+  font-size: 25px;
 }
 
 .container {
@@ -45,7 +45,7 @@ body {
 
 .box {
   min-height: 500px;
-  border: 5px solid white;
+  border: 6px solid #D4AF37;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -123,18 +123,18 @@ body {
   border: none;
 }
 .box--featured {
-  background-color:black ;
-  color: 	white;
+  background-color:#0f0f0f;
+  color: 	#D4AF37;
+  font-weight: bold;
   min-height: 550px;
   
 }
-
 .box--featured::before {
   width: 95%;
   height: 97%;
   content: "";
   position: absolute;
-  border: 5px solid ;
+  border: 6px solid #D4AF37;
 }
 .box--featured::after {
   top: 1.5%;
@@ -149,9 +149,10 @@ body {
   background-color: #171717;
   position: absolute;
 }
+
 .box--featured .box__title,
 .box--featured .box__price {
-  font-size: 40px;
+  font-size: 35px;
   padding-right: 5%;
   padding-left: 5%;
 }
@@ -175,6 +176,10 @@ body {
 
 .box__button{
   border-radius: 8px;
+}
+
+.box__button:hover{
+  transform: scale(1.1);
 }
 
 
