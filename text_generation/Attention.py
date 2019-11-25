@@ -6,6 +6,14 @@ from keras import initializers
 class Attention(Layer):
     """
     Computes a weighted average Attention. This layer inherits from Tensorflow Layer class.
+    
+    Parameters:
+    supports_masking (Boolean): if Layer supports masking mechanism
+    return_attention (Boolean): if True then return attention weights
+    init: type of initializer
+    
+    Returns:
+    [result] or [result, att_weight]
     """
 
     def __init__(self, return_attention=False, **kwargs):

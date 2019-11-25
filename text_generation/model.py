@@ -17,9 +17,9 @@ def text_generation_model(num_classes, cfg, context_size=None,
     Parameters:
     num_classes: size of vocab
     cfg: loaded configuration 
-    context_size:
+    context_size: size of the context
     weights_path: path to weights file
-    dropout: rate for dropout layer
+    dropout: rate for Spatialdropout1D layer
     optimizer: optimizer for the model
     
     Returns: 
