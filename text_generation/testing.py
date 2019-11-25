@@ -66,5 +66,5 @@ textgen = text_generator(weights_path='weights/english_128_300LSTM_weights.hdf5'
                        vocab_path='vocabs/english_128_300LSTM_vocab.json',
                        config_path='configs/english_128_300LSTM_config.json')
                        
-textgen.generate_samples(max_gen_length=200, temperatures=[0.2, 0.5, 1])
+textgen.generate_samples(max_gen_length=150, temperatures=[0.2, 0.5, 1])
 

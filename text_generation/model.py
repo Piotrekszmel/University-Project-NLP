@@ -13,6 +13,17 @@ def text_generation_model(num_classes, cfg, context_size=None,
     '''
     Builds the model architecture for text_generation and
     loads the specified weights for the model.
+    
+    Parameters:
+    num_classes: size of vocab
+    cfg: loaded configuration 
+    context_size:
+    weights_path: path to weights file
+    dropout: rate for dropout layer
+    optimizer: optimizer for the model
+    
+    Returns: 
+    Keras model 
     '''
 
     input = Input(shape=(cfg['max_length'],), name='input')
