@@ -9,7 +9,7 @@ class Attention(Layer):
     
     Parameters:
     supports_masking (Boolean): if Layer supports masking mechanism
-    return_attention (Boolean): if True then return attention weights
+    return_attention (Boolean): if True then return [result, attention weights]
     init: type of initializer
     
     Returns:

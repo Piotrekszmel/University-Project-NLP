@@ -62,6 +62,7 @@ train_function(
     dim_embeddings=100,
     word_level=model_cfg['word_level'])
 """
+
 textgen = text_generator(weights_path='weights/english_128_300LSTM_weights.hdf5',
                        vocab_path='vocabs/english_128_300LSTM_vocab.json',
                        config_path='configs/english_128_300LSTM_config.json')

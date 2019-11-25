@@ -70,8 +70,28 @@ class text_generator:
 
     def generate(self, n=1, return_as_list=False, prefix=None,
                  temperature=[1.0, 0.5, 0.2, 0.2],
-                 max_gen_length=300, interactive=False,
+                 max_gen_length=300,
                  top_n=3, progress=True):
+        """
+        Generate text
+
+        Parameters:
+        n: number of text to generate
+        
+        return_as_list (Boolean): if true then return list with generated texts
+        
+        prefix: Each generated text will start with a given text
+        
+        temperature: list of temperatures that will be used during generating
+        
+        max_gen_length: maximum length of generated text
+        
+        top_n: 
+
+        Returns:
+        if return_as_list then list of generated text else none
+        """
+
         gen_texts = []
         iterable = trange(n) if progress and n > 1 else range(n)
         for _ in iterable:
@@ -85,7 +105,6 @@ class text_generator:
                                            self.config.get(
                                                'single_text', False),
                                            max_gen_length,
-                                           interactive,
                                            top_n,
                                            prefix)
             if not return_as_list:
