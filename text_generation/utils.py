@@ -50,20 +50,37 @@ def text_generation_generate(model, vocab,
                         word_level=False,
                         single_text=False,
                         max_gen_length=300,
-                        interactive=False,
                         top_n=3,
                         prefix=None,
                         synthesize=False,
                         stop_tokens=[' ', '\n']):
-    '''
+    """
     Generates and returns a single text.
-    '''
+
+    Parameters:
+    indices_char: dict mapping indcies to characters
+    
+    temperature: temperature or list of temperatures that will be used during generation
+    
+    maxlen: maximum number of characters that will be involved in predicting next character
+    
+    meta_token:
+
+    single_text: 
+
+    max_gen_length: maximum length of generated text
+
+    prefix: Each generated text will start with a given text
+
+    synthesize:
+
+    stop_tokens:  
+    """
 
     collapse_char = ' ' if word_level else ''
     end = False
 
     # If generating word level, must add spaces around each punctuation.
-    # https://stackoverflow.com/a/3645946/9314418
     if word_level and prefix:
         punct = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~\\n\\t\'‘’“”’–—'
         prefix = re.sub('([{}])'.format(punct), r' \1 ', prefix)
@@ -91,56 +108,18 @@ def text_generation_generate(model, vocab,
                                                   vocab, maxlen)
         next_temperature = temperature[(len(text) - 1) % len(temperature)]
 
-        if not interactive:
-            # auto-generate text without user intervention
-            next_index = text_generation_sample(
-                model.predict(encoded_text, batch_size=1)[0],
-                next_temperature)
-            next_char = indices_char[next_index]
-            text += [next_char]
-            if next_char == meta_token or len(text) >= max_gen_length:
-                end = True
-            gen_break = (next_char in stop_tokens or word_level or
-                         len(stop_tokens) == 0)
-            if synthesize and gen_break:
-                break
-        else:
-            # ask user what the next char/word should be
-            options_index = text_generation_sample(
-                model.predict(encoded_text, batch_size=1)[0],
-                next_temperature,
-                interactive=interactive,
-                top_n=top_n
-            )
-            options = [indices_char[idx] for idx in options_index]
-            print('Controls:\n\ts: stop.\tx: backspace.\to: write your own.')
-            print('\nOptions:')
-
-            for i, option in enumerate(options, 1):
-                print('\t{}: {}'.format(i, option))
-
-            print('\nProgress: {}'.format(collapse_char.join(text)[3:]))
-            print('\nYour choice?')
-            user_input = input('> ')
-
-            try:
-                user_input = int(user_input)
-                next_char = options[user_input-1]
-                text += [next_char]
-            except ValueError:
-                if user_input == 's':
-                    next_char = '<s>'
-                    text += [next_char]
-                elif user_input == 'o':
-                    other = input('> ')
-                    text += [other]
-                elif user_input == 'x':
-                    try:
-                        del text[-1]
-                    except IndexError:
-                        pass
-                else:
-                    print('That\'s not an option!')
+        next_index = text_generation_sample(
+            model.predict(encoded_text, batch_size=1)[0],
+            next_temperature)
+        next_char = indices_char[next_index]
+        text += [next_char]
+        if next_char == meta_token or len(text) >= max_gen_length:
+            end = True
+        gen_break = (next_char in stop_tokens or word_level or
+                     len(stop_tokens) == 0)
+        if synthesize and gen_break:
+            break
+        
 
     # if single text, ignore sequences generated w/ padding
     # if not single text, remove the <s> meta_tokens
