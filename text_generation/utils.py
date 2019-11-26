@@ -134,14 +134,9 @@ def text_generation_generate(model, vocab,
 
     # If word level, remove spaces around punctuation for cleanliness.
     if word_level:
-        #     left_punct = "!%),.:;?@]_}\\n\\t'"
-        #     right_punct = "$([_\\n\\t'"
         punct = '\\n\\t'
         text_joined = re.sub(" ([{}]) ".format(punct), r'\1', text_joined)
-        #     text_joined = re.sub(" ([{}])".format(
-        #       left_punct), r'\1', text_joined)
-        #     text_joined = re.sub("([{}]) ".format(
-        #       right_punct), r'\1', text_joined)
+        
 
     return text_joined, end
 
@@ -150,6 +145,11 @@ def text_generation_encode_sequence(text, vocab, maxlen):
     '''
     Encodes a text into the corresponding encoding for prediction with
     the model.
+    
+    Parameters:
+    text: text to encode
+    vocab: char -> index vocabulary
+    maxlen: max length of text to encode
     '''
 
     encoded = np.array([vocab.get(x, 0) for x in text])
