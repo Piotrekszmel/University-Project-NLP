@@ -102,8 +102,7 @@ class text_generator:
                                            self.config['max_length'],
                                            self.META_TOKEN,
                                            self.config['word_level'],
-                                           self.config.get(
-                                               'single_text', False),
+                                           self.config.get('single_text', False),
                                            max_gen_length,
                                            top_n,
                                            prefix)

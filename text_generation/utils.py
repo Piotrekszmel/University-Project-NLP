@@ -148,7 +148,7 @@ def text_generation_encode_sequence(text, vocab, maxlen):
     
     Parameters:
     text: text to encode
-    vocab: char -> index vocabulary
+    vocab: char/word -> index vocabulary
     maxlen: max length of text to encode
     '''
 
@@ -210,7 +210,8 @@ def text_generation_encode_cat(chars, vocab):
 def synthesize(textgens, n=1, return_as_list=False, prefix='',
                temperature=[0.5, 0.2, 0.2], max_gen_length=300,
                progress=True, stop_tokens=[' ', '\n']):
-    """Synthesizes texts using an ensemble of input models.
+    """
+    Synthesizes texts using an ensemble of input models.
     """
 
     gen_texts = []
