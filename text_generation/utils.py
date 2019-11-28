@@ -72,9 +72,9 @@ def text_generation_generate(model, vocab,
 
     prefix: Each generated text will start with a given text
 
-    synthesize:
+    synthesize (Boolean): True if You use synthesize or synthesize method else False
 
-    stop_tokens:  
+    stop_tokens: Token that stop the generation. Informs the generator using the synthesize method that a word has been generated. Generator then changes the model for predicting next word
     """
 
     collapse_char = ' ' if word_level else ''
@@ -104,13 +104,10 @@ def text_generation_generate(model, vocab,
         model = Model(inputs=model.inputs[0], outputs=model.outputs[1])
 
     while not end and len(text) < max_gen_length:
-        encoded_text = text_generation_encode_sequence(text[-maxlen:],
-                                                  vocab, maxlen)
+        encoded_text = text_generation_encode_sequence(text[-maxlen:], vocab, maxlen)
         next_temperature = temperature[(len(text) - 1) % len(temperature)]
 
-        next_index = text_generation_sample(
-            model.predict(encoded_text, batch_size=1)[0],
-            next_temperature)
+        next_index = text_generation_sample(model.predict(encoded_text, batch_size=1)[0], next_temperature)
         next_char = indices_char[next_index]
         text += [next_char]
         if next_char == meta_token or len(text) >= max_gen_length:

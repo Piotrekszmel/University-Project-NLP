@@ -191,8 +191,7 @@ class text_generator:
 
         steps_per_epoch = max(int(np.floor(num_tokens / batch_size)), 1)
 
-        gen = generate_sequences_from_texts(
-            texts, indices_list, self, context_labels, batch_size)
+        gen = generate_sequences_from_texts(texts, indices_list, self, context_labels, batch_size)
 
         base_lr = 4e-3
 
@@ -334,16 +333,13 @@ class text_generator:
 
         context_labels = None
         if context:
-            texts, context_labels = text_generation_texts_from_file_context(
-                file_path)
+            texts, context_labels = text_generation_texts_from_file_context(file_path)
         else:
-            texts = text_generation_texts_from_file(file_path, header,
-                                               delim, is_csv)
+            texts = text_generation_texts_from_file(file_path, header, delim, is_csv)
 
         print("{:,} texts collected.".format(len(texts)))
         if new_model:
-            self.train_new_model(
-                texts, context_labels=context_labels, **kwargs)
+            self.train_new_model(texts, context_labels=context_labels, **kwargs)
         else:
             self.train_on_texts(texts, context_labels=context_labels, **kwargs)
 
