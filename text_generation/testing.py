@@ -39,8 +39,6 @@ with open('datasets/eng.txt', 'w') as f:
     for text in texts:
         f.write("{}".format(text))
 
-
-
 model_name = 'english_128xd_300LSTM'
 file_name = "datasets/eng.txt"
 textgen = text_generator(name=model_name)
