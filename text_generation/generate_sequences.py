@@ -29,7 +29,7 @@ def generate_sequences_from_texts(texts, indices_list,
         Y_batch = []
         context_batch = []
         count_batch = 0
-
+        
         for row in range(indices_list.shape[0]):
             text_index = indices_list[row, 0]
             end_index = indices_list[row, 1]
