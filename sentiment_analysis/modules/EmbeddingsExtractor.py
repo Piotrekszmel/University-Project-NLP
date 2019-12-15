@@ -5,12 +5,10 @@ from sklearn.base import BaseEstimator, TransformerMixin
 class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
     def __init__(self, word_indices, max_lengths=None, add_tokens=None, unk_policy="random", **kwargs):
         """
-            :param word_indices:
-            :param max_lengths: list of integers indicating the max limit of words
-                                for each data list in X
-            :param unk_policy: "random","zero"
+        :param word_indices:
+        :param max_lengths: list of integers indicating the max limit of words for each data list in X
+        :param unk_policy: "random","zero"
         """
-
         self.word_indices = word_indices
         self.max_lengths = max_lengths
         self.add_tokens = add_tokens
@@ -28,7 +26,6 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         
         return Xs
 
-    
     def get_fixed_size_topic(self, X, max_lengths):
         X = list(X)
         Xs = np.zeros((len(X), max_lengths), dtype="int32")
@@ -50,7 +47,6 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         
         return Xs
     
-    
     def index_text(self, sent, add_tokens=False):
         sent_words = []
         
@@ -71,7 +67,6 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         
         return sent_words
 
-    
     def words_to_indices(self, X, add_tokens=False):
         """
         :param X: list of texts
@@ -82,8 +77,7 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
             Xs.append(np.asarray(self.index_text(sent, add_tokens=add_tokens)))
         return np.asarray(Xs)
 
-   
-    def index_text_list(self, texts, length, add_tokens):
+   def index_text_list(self, texts, length, add_tokens):
         """
         Converts a list of texts (strings) to a list of lists of integers (word ids)
         :param texts: the list of texts
@@ -91,7 +85,6 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         :param add_tokens: whether to add special tokens in the beginning and at the end of each text
         :return: list of lists of integers (word ids)
         """
-        
         indexed = self.words_to_indices(texts, add_tokens=add_tokens)
        
         if length > 0:

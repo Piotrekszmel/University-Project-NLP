@@ -13,6 +13,7 @@ from keras.regularizers import l2
 from ..utilities.layers import AttentionWithContext, Attention, MeanOverTime
 from sklearn import preprocessing
 
+
 def embeddings_layer(max_length, embeddings, trainable=False, masking=False,
                      scale=False, normalize=False):
     if scale:

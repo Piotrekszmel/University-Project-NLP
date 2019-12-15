@@ -157,17 +157,17 @@ class text_generator:
             texts = [text_to_word_sequence(text, filters='') for text in texts]
 
         # calculate all combinations of text indices + token indices
-        indices_list = [np.meshgrid(np.array(i), np.arange(
-            len(text) + 1)) for i, text in enumerate(texts)]
+        indices_list = [np.meshgrid(np.array(i), np.arange(len(text) + 1)) for i, text in enumerate(texts)]
         indices_list = np.block(indices_list)
 
         # If a single text, there will be 2 extra indices, so remove them
         # Also remove first sequences which use padding
         if self.config['single_text']:
             indices_list = indices_list[self.config['max_length']:-2, :]
-
+        
         indices_mask = np.random.rand(indices_list.shape[0]) < train_size
-
+      
+        
         if multi_gpu:
             num_gpus = len(K.tensorflow_backend._get_available_gpus())
             batch_size = batch_size * num_gpus
@@ -182,7 +182,7 @@ class text_generator:
                 int(np.floor(indices_list_val.shape[0] / batch_size)), 1)
 
         indices_list = indices_list[indices_mask, :]
-
+        
         num_tokens = indices_list.shape[0]
         assert num_tokens >= batch_size, "Fewer tokens than batch_size."
 

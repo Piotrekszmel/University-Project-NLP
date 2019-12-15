@@ -17,53 +17,53 @@ class WordVectorsManager(ResourceManager):
 
     
     def is_ascii(self, text):
-      try:
-        text.encode('ascii')
-        return True
-      except:
-        return False
+    	try:
+        	text.encode('ascii')
+        	return True
+      	except:
+        	return False
 
     
     def write(self):
-      _word_vector_file = os.path.join(os.path.dirname(__file__), self.wv_filename)
+      	_word_vector_file = os.path.join(os.path.dirname(__file__), self.wv_filename)
 
-      if os.path.exists(_word_vector_file):
-        print('Indexing file {} ...'.format(self.wv_filename))
-        
-        embeddings_dict = {}
-        f = open(_word_vector_file, "r", encoding="utf-8")
-        
-        for line in f:
-          values = line.split()
-          word = values[0]
-          coefs = np.asarray(values[1:], dtype="float32")
+		if os.path.exists(_word_vector_file):
+			print('Indexing file {} ...'.format(self.wv_filename))
+			
+			embeddings_dict = {}
+			f = open(_word_vector_file, "r", encoding="utf-8")
+			
+			for line in f:
+			values = line.split()
+			word = values[0]
+			coefs = np.asarray(values[1:], dtype="float32")
 
-          if self.omit_non_english and not self.is_ascii(word):
-            continue
+			if self.omit_non_english and not self.is_ascii(word):
+				continue
 
-          embeddings_dict[word] = coefs
-      
-        f.close()
-        
-        print("Found {} word vectors.".format(len(embeddings_dict)))
+			embeddings_dict[word] = coefs
+		
+			f.close()
+			
+			print("Found {} word vectors.".format(len(embeddings_dict)))
 
-        with open(os.path.join(os.path.dirname(__file__), self.parsed_filename), "wb") as pickle_file:
-          pickle.dump(embeddings_dict, pickle_file)
+			with open(os.path.join(os.path.dirname(__file__), self.parsed_filename), "wb") as pickle_file:
+			pickle.dump(embeddings_dict, pickle_file)
 
-      else:
-          print("{} not found!".format(_word_vector_file))
-          raise FileNotFoundError(
-                errno.ENOENT, os.strerror(errno.ENOENT), _word_vector_file)
+		else:
+			print("{} not found!".format(_word_vector_file))
+			raise FileNotFoundError(
+					errno.ENOENT, os.strerror(errno.ENOENT), _word_vector_file)
 
 
     def read(self):
-      _parsed_file = os.path.join(os.path.dirname(__file__), self.parsed_filename)
-      
-      if os.path.exists(_parsed_file):
-        with open(_parsed_file, "rb") as f:
-          return pickle.load(f)
-      
-      else:
-        self.write()
-        return self.read
+		_parsed_file = os.path.join(os.path.dirname(__file__), self.parsed_filename)
+		
+		if os.path.exists(_parsed_file):
+			with open(_parsed_file, "rb") as f:
+			return pickle.load(f)
+		
+		else:
+			self.write()
+			return self.read
 

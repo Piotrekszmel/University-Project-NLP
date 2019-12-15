@@ -1,4 +1,3 @@
-
 import os
 from sentiment_analysis.evaluate import predict_class
 
