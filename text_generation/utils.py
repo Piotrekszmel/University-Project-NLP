@@ -18,7 +18,6 @@ def text_generation_sample(preds, temperature, interactive=False, top_n=3):
     Samples predicted probabilities of the next character to allow
     for the network to show "creativity."
     '''
-
     preds = np.asarray(preds).astype('float64')
 
     if temperature is None or temperature == 0.0:
@@ -31,7 +30,6 @@ def text_generation_sample(preds, temperature, interactive=False, top_n=3):
 
     if not interactive:
         index = np.argmax(probas)
-
         # prevent function from being able to choose 0 (placeholder)
         # choose 2nd best index from preds
         if index == 0:
@@ -139,7 +137,7 @@ def text_generation_generate(model, vocab,
 
 
 def text_generation_encode_sequence(text, vocab, maxlen):
-    '''
+    """
     Encodes a text into the corresponding encoding for prediction with
     the model.
     
@@ -147,18 +145,16 @@ def text_generation_encode_sequence(text, vocab, maxlen):
     text: text to encode
     vocab: char/word -> index vocabulary
     maxlen: max length of text to encode
-    '''
-
+    """
     encoded = np.array([vocab.get(x, 0) for x in text])
     return sequence.pad_sequences([encoded], maxlen=maxlen)
 
 
 def text_generation_texts_from_file(file_path, header=True,
                                delim='\n', is_csv=False):
-    '''
+    """
     Retrieves texts from a newline-delimited file and returns as a list.
-    '''
-
+    """
     with open(file_path, 'r', encoding='utf8', errors='ignore') as f:
         if header:
             f.readline()
@@ -174,9 +170,9 @@ def text_generation_texts_from_file(file_path, header=True,
 
 
 def text_generation_texts_from_file_context(file_path, header=True):
-    '''
+    """
     Retrieves texts+context from a two-column CSV.
-    '''
+    """
 
     with open(file_path, 'r', encoding='utf8', errors='ignore') as f:
         if header:
@@ -192,10 +188,10 @@ def text_generation_texts_from_file_context(file_path, header=True):
 
 
 def text_generation_encode_cat(chars, vocab):
-    '''
+    """
     One-hot encodes values at given chars efficiently by preallocating
     a zeros matrix.
-    '''
+    """
 
     a = np.float32(np.zeros((len(chars), len(vocab) + 1)))
     rows, cols = zip(*[(i, vocab.get(char, 0))

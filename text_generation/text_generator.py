@@ -330,8 +330,8 @@ class text_generator:
     def train_from_file(self, file_path, header=True, delim="\n",
                         new_model=False, context=None,
                         is_csv=False, **kwargs):
-
         context_labels = None
+        
         if context:
             texts, context_labels = text_generation_texts_from_file_context(file_path)
         else:
@@ -362,7 +362,6 @@ class text_generator:
     def encode_text_vectors(self, texts, pca_dims=50, tsne_dims=None,
                             tsne_seed=None, return_pca=False,
                             return_tsne=False):
-
         # if a single text, force it into a list:
         if isinstance(texts, str):
             texts = [texts]
