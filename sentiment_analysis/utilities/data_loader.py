@@ -56,7 +56,7 @@ def get_embeddings(corpus, dim):
 
 
 def prepare_text_only_dataset(X, pipeline):
-     X = pipeline.fit_transform(X)
+     X = pipeline.transform(X)
      return X
 
 
