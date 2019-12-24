@@ -41,23 +41,19 @@ class text_generator:
                  name="text_generation"):
 
         if weights_path is None:
-            weights_path = resource_filename(__name__,
-                                             'weights/text_generation_weights.hdf5')
+            weights_path = resource_filename(__name__, 'weights/text_generation_weights.hdf5')
 
         if vocab_path is None:
-            vocab_path = resource_filename(__name__,
-                    'vocabs/text_generation_vocab.json')
+            vocab_path = resource_filename(__name__, 'vocabs/text_generation_vocab.json')
 
         if config_path is not None:
-            with open(config_path, 'r',
-                      encoding='utf8', errors='ignore') as json_file:
+            with open(config_path, 'r', encoding='utf8', errors='ignore') as json_file:
                 self.config = json.load(json_file)
 
         self.config.update({'name': name})
         self.default_config.update({'name': name})
 
-        with open(vocab_path, 'r',
-                  encoding='utf8', errors='ignore') as json_file:
+        with open(vocab_path, 'r', encoding='utf8', errors='ignore') as json_file:
             self.vocab = json.load(json_file)
 
         self.tokenizer = Tokenizer(filters='', lower=False, char_level=True)

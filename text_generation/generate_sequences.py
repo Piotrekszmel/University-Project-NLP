@@ -29,7 +29,7 @@ def generate_sequences_from_texts(texts, indices_list,
         Y_batch = []
         context_batch = []
         count_batch = 0
-        
+
         for row in range(indices_list.shape[0]):
             text_index = indices_list[row, 0]
             end_index = indices_list[row, 1]
@@ -43,6 +43,7 @@ def generate_sequences_from_texts(texts, indices_list,
                 x = text[end_index - max_length: end_index + 1]
             else:
                 x = text[0: end_index + 1]
+            
             y = text[end_index + 1]
 
             if y in textgen.vocab:
@@ -74,7 +75,6 @@ def generate_sequences_from_texts(texts, indices_list,
 
 def process_sequence(X, textgen, new_tokenizer):
     X = new_tokenizer.texts_to_sequences(X)
-    X = sequence.pad_sequences(
-        X, maxlen=textgen.config['max_length'])
+    X = sequence.pad_sequences(X, maxlen=textgen.config['max_length'])
 
     return X
