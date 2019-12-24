@@ -7,14 +7,14 @@
   <link rel="stylesheet" href="../static/css/sentiment.css">
 </head>
 <body style="background-color: #1e1e1e">
-  <div class="inner" style="background-color: #1e1e1e">
+	<div class="inner" style="background-color: #1e1e1e">
 		<header>
 			<div>
 				<h2 style="color: #FFDF00; font-weight: 900;">Predict if sentence is negative, neutral or positive.</h2>
 				<p style="font-weight: 600; color: #FFFFFF"><br>
 				Write down your sentence i.e "I am happy :)" and findout whenever the sentence is <span style="color: #3333ff">Neutral</span>, <span style="color:green"> Positive</span> or <span style="color:red">Negative.</span></p>
 			</div>
-		</header>
+	    </header>
 	</div>
 	<div class="ml-container" style="background-color: #1e1e1e	">
 		<form action="{{  url_for('sentiment') }}" method='POST'>
@@ -24,9 +24,9 @@
 			</div>
 		</form>
 		<div>
-				<form action="{{ url_for('index') }}" method='POST'>
-					<input class="button__back" type="submit" value="back">
-				</form>
+			<form action="{{ url_for('index') }}" method='POST'>
+				<input class="button__back" type="submit" value="back">
+			</form>
 		</div>
 	</div>
 </body>

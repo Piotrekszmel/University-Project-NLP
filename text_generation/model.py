@@ -25,7 +25,6 @@ def text_generation_model(num_classes, cfg, context_size=None,
     Returns: 
     Keras model 
     '''
-
     input = Input(shape=(cfg['max_length'],), name='input')
     embedded = Embedding(num_classes, cfg['dim_embeddings'],
                          input_length=cfg['max_length'],
@@ -64,7 +63,6 @@ def text_generation_model(num_classes, cfg, context_size=None,
             model.load_weights(weights_path, by_name=True)
         model.compile(loss='categorical_crossentropy', optimizer=optimizer,
                       loss_weights=[0.8, 0.2])
-
     return model
 
 

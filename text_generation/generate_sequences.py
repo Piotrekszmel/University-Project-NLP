@@ -21,7 +21,7 @@ def generate_sequences_from_texts(texts, indices_list,
         new_tokenizer.word_index = textgen.vocab
     else:
         new_tokenizer = textgen.tokenizer
-
+    
     while True:
         np.random.shuffle(indices_list)
 

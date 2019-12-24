@@ -8,7 +8,7 @@ config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 set_session(sess)
 
-"""
+
 model_cfg = {
     'word_level': False,   # set to True if want to train a word-level model (requires more data and smaller max_length)
     'rnn_size': 128,   # number of LSTM cells of each layer (128/256 recommended)
@@ -39,9 +39,7 @@ with open('datasets/eng.txt', 'w') as f:
     for text in texts:
         f.write("{}".format(text))
 
-
-
-model_name = 'english_128_300LSTM'
+model_name = 'english_128xd_300LSTM'
 file_name = "datasets/eng.txt"
 textgen = text_generator(name=model_name)
 train_function = textgen.train_from_file if train_cfg['line_delimited'] else textgen.train_from_largetext_file
@@ -61,11 +59,11 @@ train_function(
     max_length=model_cfg['max_length'],
     dim_embeddings=100,
     word_level=model_cfg['word_level'])
-"""
 
+"""
 textgen = text_generator(weights_path='weights/english_128_300LSTM_weights.hdf5',
                        vocab_path='vocabs/english_128_300LSTM_vocab.json',
                        config_path='configs/english_128_300LSTM_config.json')
                        
 textgen.generate_samples(max_gen_length=150, temperatures=[0.2, 0.5, 1])
-
+"""

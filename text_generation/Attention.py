@@ -15,7 +15,6 @@ class Attention(Layer):
     Returns:
     [result] or [result, att_weight]
     """
-
     def __init__(self, return_attention=False, **kwargs):
         self.init = initializers.get('uniform')
         self.supports_masking = True
