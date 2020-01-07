@@ -110,13 +110,16 @@ class text_generator:
                 print("{}\n".format(gen_text))
             gen_texts.append(gen_text)
         if return_as_list:
+            print(gen_texts)
             return gen_texts
 
     def generate_samples(self, n=3, temperatures=[0.2, 0.5, 1.0], **kwargs):
+        texts = []
         for temperature in temperatures:
             print('#'*20 + '\nTemperature: {}\n'.format(temperature) +
                   '#'*20)
-            self.generate(n, temperature=temperature, progress=False, **kwargs)
+            texts.append(self.generate(n, temperature=temperature, progress=False, **kwargs))
+        return texts
 
     def train_on_texts(self, texts, context_labels=None,
                        batch_size=128,

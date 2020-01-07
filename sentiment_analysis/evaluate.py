@@ -44,6 +44,6 @@ def predict_sentiment_single_tweet(tweet, model, pipeline: Pipeline):
     tweet = tweet[0].reshape(1, 50)
     prediction = model.predict(tweet)
     index = np.argmax(prediction)
-    print(index)
+    return [index]
     
 

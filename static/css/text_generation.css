@@ -28,6 +28,19 @@ p {
 	font-style: italic;
 }
 
+input[type="file"] { 
+  z-index: -1;
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  width: 0;
+}
+
+input:focus + label {
+  outline: 2px solid;
+}
+
 .button {
 	padding: 1px 6px;
 }
@@ -57,6 +70,11 @@ p {
 	margin-top: 5px;
 	color: #ffffff;
 	font-size: 15px;
+}
+
+.button_label {
+    height: 80px;
+    width: 240px;
 }
 
 .text {
@@ -150,5 +168,118 @@ p {
 .select-css option {
     font-weight:normal;
 }
+
+
+.button_predict {
+    color: black !important;
+    background-color: goldenrod;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 900;
+    width: 8%;
+    height: 40px;
+    border: 2px solid #fff !important;
+    border-radius: 50px;
+    display: inline-block;
+    transition: all 0.4s ease 0s;
+    font-family: 'Amatic SC', cursive;
+}
+
+.button_predict:hover {
+    color: goldenrod !important;
+    background: black;
+    transition: all 0.4s ease 0s;
+}
+
+
+label {
+  background: transparent;
+  border: 3px solid white;
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  font-size: inherit; 
+  font-weight: 600;
+  margin-bottom: 1rem;
+  outline: none;
+  padding: 1rem 50px;
+  position: relative;
+  transition: all 0.5s;
+  vertical-align: middle;
+}
+
+.button1 {
+    display: inline-block;
+    background-color: goldenrod;
+    color: black !important;
+    border-radius: 4px;
+    border: 2px solid #fff;
+    text-align: center;
+    font-size: 1.0em;
+    font-weight: 700;
+    font-family: 'Amatic SC', cursive;
+    padding: 20px;
+    width: 150px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 5px;
+    }
+
+.button1 span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+
+.button1 span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+
+.button1:hover span {
+    padding-right: 25px;
+}
+
+.button1:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+
+
+.predictions {
+    padding-top: 1%;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#loader {
+    position: absolute;
+    left: 48.5%;
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #33e3ff;
+    border-right: 8px solid white;
+    border-bottom: 8px solid  #33e3ff ;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    visibility: hidden;
+}
+
+#file-upload-filename {
+  color: #fff;
+  font-family: 'Pernament Marker', cursive;
+  font-weight: 900;
+}
+
 
 

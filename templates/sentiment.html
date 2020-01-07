@@ -28,6 +28,17 @@
 				<input class="button__back" type="submit" value="back">
 			</form>
 		</div>
+        <div class="prediction-section">
+			{% if prediction == 0 %}
+				<p style="color:red">NEGATIVE</p>
+			{% elif prediction == 1 %}
+				<p style="color:gray">NEUTRAL</p>
+			{% elif prediction == 2 %}
+				<p style="color:green">POSITIVE</p>
+			{% else %}
+				<p></p>
+			{% endif %}
+		</div>
 	</div>
 </body>
 </html>

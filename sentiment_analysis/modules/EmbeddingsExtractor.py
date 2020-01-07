@@ -77,7 +77,7 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
             for sent in X:
                 Xs.append(np.asarray(self.index_text(sent, add_tokens=add_tokens)))
         else:
-            Xs = np.asarray(seld.index_text(X, add_tokens=add_tokens))
+            Xs = np.asarray(self.index_text(X, add_tokens=add_tokens))
         return np.asarray(Xs)
 
     def index_text_list(self, texts, length, add_tokens):
@@ -89,14 +89,12 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
         :return: list of lists of integers (word ids)
         """
         indexed = self.words_to_indices(texts, add_tokens=add_tokens)
-        print('text_lisr', indexed)
-       
+
         if length > 0:
             indexed = self.sequences_to_fixed_length(indexed, length)
         
         return indexed
         
-    
     def transform(self, X, y=None):
         if isinstance(X, str):
             pass
@@ -127,7 +125,6 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
                 return [self.index_text_list(texts, length, add_tokens)
                         for texts, length, add_tokens in zip(zip(*X), max_lengths, add_tokens)]
 
-                
         else:
             if self.max_lengths is None:
                 max_lengths = 0

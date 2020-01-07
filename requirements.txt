@@ -7,3 +7,4 @@ keras-utilities
 tensorflow
 frozendict
 cachetools
+pandas
