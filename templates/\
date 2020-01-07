@@ -23,12 +23,10 @@
             </select>
             <br><br>
             <h1 style="color: orange; ">Choose max length for generated text and temperatures</h1>
-            <form style="color: white;" action="/save_options" enctype="application/json" method="POST">
+            <form style="color: white;">
                 MAX LENGTH: <input type="text" name="max_length" style="font-size: 1em;" placeholder="1000">
                 &nbsp; &nbsp;TEMPERATURES: <input type="text" name="temperatures" style="font-size: 1em;" 
                 placeholder="0.2, 0.4, 0.8, 1"> 
-                <br><br>
-                <button class='button_predict' type="submit">Save Options</button>
             </form>
             <br/><br/><br/>
             <h1 style="color: rosybrown">
@@ -36,21 +34,15 @@
                 WEIGHTS AND TEXT FROM YOUR FILE!
             </h1>
             <br><br><br>
-            <div style="padding: 0% 0 3%; margin: 0 auto;">
-                <div id='loader' style='padding:0%;'></div>
-            </div>
-            <form action='/read' method='POST' enctype="application/json" name="file_name">
-                <div>
-                    <div id="file-upload-filename"></div>
-                    <input type="file" id="file-upload" name="data_file">
-                    <label for='file-upload' class='button1'><span>Upload text file</span></label>
+            <div id='loader' style='padding:0%; visibility:hidden'></div>
+            <form action='/read' method='POST' enctype="multipart/form-data" style='padding:1%'>
+                <div id="file-upload-filename"></div></div>
+                <input id="file-upload" name="data_file"  type="file" value="UPLOAD TXT FILE">
+                <label for='file-upload' class='button_label'><span>Upload .csv</span></label></span></label>
+                <div class="button">
+                    <button class='predict_button' type="submit" value='Calculate' onclick='showLoader()'></button>
                 </div>
-                <div class="predictions">
-                    <button class='button_predict' type="submit" onclick='showLoader()'>Generate!</button>
-                </div>
-                <div style="padding: 2%">
-                    <p id='errorMsg' style='padding: 1%; color: red;'>{{error}}</p></p>
-                </div>
+                <p id='errorMsg' class='orange' style='padding: 1%;'>{{error}}</p></p>
             </form>
         </div>
     </div>
@@ -70,7 +62,7 @@
         function showLoader(){
             var loader = document.getElementById('loader');
             loader.style.visibility = 'visible';
-            window.location = 'http://localhost:5004/Generation';            
+            window.location = 'http://localhost:5004/text_generation';            
         }
         
         function sleep(ms) {

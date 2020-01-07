@@ -12,7 +12,6 @@ class DataLoader:
         self.verbose = verbose
         self.separator = "\t"
         self.datasets_path = os.path.join(os.getcwd(), 'sentiment_analysis/data/datasets')
-        print()
 
     def parse_file(self, filename, with_topic=False):
         """
@@ -36,9 +35,12 @@ class DataLoader:
                 tweet_id = columns[0]
             
                 if with_topic:
-                topic = clean_text(columns[1])
-                if not isinstance(topic, str) or "None" in topic:
-                    print(tweet_id, topic)
+                    try:
+                        topic = clean_text(columns[1])
+                    except:
+                        topic = None
+                    if not isinstance(topic, str) or "None" in topic:
+                        print(tweet_id, topic)
                 
                 sentiment = columns[2]
                 text = clean_text(" ".join(columns[3:]))
@@ -47,7 +49,7 @@ class DataLoader:
                     data[tweet_id] = (sentiment, (topic, text))
                 
                 else:
-                sentiment = columns[1]
+                    sentiment = columns[1]
                 text = clean_text(" ".join(columns[2:]))
 
                 if text != "Not Available":
@@ -90,7 +92,7 @@ class DataLoader:
             if datasets is not None and _type not in datasets:
                 continue
         
-            dataset = self.parse_file(file)
+            dataset = self.parse_file(file, with_topic=True)
             data.update(dataset)
     
         return [v for k, v in sorted(data.items())]

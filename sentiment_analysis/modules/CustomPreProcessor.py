@@ -24,18 +24,19 @@ class CustomPreProcessor(BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None):
         if self.to_list:
-            if os.path.exists('{}.pickle'.format(len(X))):
-                with open('{}.pickle'.format(len(X)), 'rb') as handle:
-                    processed = pickle.load(handle)
-            
-            else:
-                processed = list(self.pre_process_steps(X))
-                with open('{}.pickle'.format(len(X)), 'wb') as handle:
-                    pickle.dump(processed, handle)
-            
-            return numpy.array(processed)
-        
+            #if os.path.exists('{}.pickle'.format(len(X))):
+            #    print('path exists')
+            #    with open('{}.pickle'.format(len(X)), 'rb') as handle:
+            #        processed = pickle.load(handle)
+            #
+            #else:
+            X = [X]
+            processed = list(self.pre_process_steps(X))
+            with open('{}.pickle'.format(len(X)), 'wb') as handle:
+                pickle.dump(processed, handle)
+            return numpy.array(processed)  
         else:
+            X = [X]
             processed = self.pre_process_steps(X)
             return processed
 

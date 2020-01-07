@@ -76,8 +76,8 @@ p {
 	justify-content: center;
 	margin: 0;
 	margin-top: 5%;
-  color: black;
-  text-align: center;
+	color: black;
+	text-align: center;
 }
 
 .button__back {
@@ -101,4 +101,25 @@ p {
 	font-size: 20px;
 	padding-top: 0.2em;
 	padding-bottom: 1em;
+}
+
+.prediction-section p {	
+	font-size: 5.5em;
+	font-weight: 900;
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+@media only screen and (max-width: 500px) {
+	.prediction-section p {
+		font-size: 4.5em;
+	}
+	.inner p {
+		font-size: 1.1em;
+	}
+	.inner h2 {
+		font-size: 2.3em;
+	}
+	.text {
+		width: 90%;
+	}
 }
