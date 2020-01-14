@@ -25,3 +25,4 @@ def create_model(corpus, dim, weights_path=None):
     else:
         nn_model.build()
     return nn_model, word_indices
+    

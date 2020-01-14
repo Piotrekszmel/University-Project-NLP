@@ -78,11 +78,14 @@ def read_file():
 
 
 if __name__ == "__main__":
-    #sess = tf.Session()
-    #set_session(sess)
-    #global graph, sentiment_model
-    #sentiment_model, word_indices = create_model("datastories.twitter", 300, "sentiment_analysis/weights/bi_model_weights_1.h5")
-    #graph = tf.get_default_graph()
-
-    #loader = Loader(word_indices, text_lengths=50)
-    app.run(debug=True, host="0.0.0.0", port=5004)
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth=True
+    sess = tf.Session(config=config)
+    set_session(sess)
+    global graph, sentiment_model
+    sentiment_model, word_indices = create_model("datastories.twitter", 300, "sentiment_analysis/weights/bi_model_weights_1.h5")
+    graph = tf.get_default_graph()
+    
+    loader = Loader(word_indices, text_lengths=50)
+    
+    app.run(debug=False, host="0.0.0.0", port=5004)
